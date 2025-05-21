@@ -1,0 +1,37 @@
+[wokwi]
+version = 1
+firmware = "sketch.ino"
+elf = "build/sketch.elf"
+fqbn = "esp32:esp32:esp32dev"
+libraries = [
+  "WiFi",
+  "WebServer",
+  "SPI",
+  "LoRa",
+  "BLEDevice",
+  "BLEServer",
+  "BLEUtils",
+  "BLE2902",
+  "DHT sensor library",
+  "Wire",
+  "Adafruit MPU6050",
+  "Adafruit Unified Sensor",
+  "OneWire",
+  "DallasTemperature",
+  "RTClib"
+]
+
+[project]
+main = "sketch.ino"
+diagram = "diagram.json"
+
+[dependencies]
+"adafruit/Adafruit MPU6050" = "2.2.3"
+"adafruit/DHT sensor library" = "1.4.4"
+"adafruit/Adafruit Unified Sensor" = "1.1.9"
+"paulstoffregen/OneWire" = "2.3.7"
+"milesburton/DallasTemperature" = "3.11.0"
+"adafruit/RTClib" = "2.1.1"
+"mathertel/RadioHead" = "1.120"
+"h2zero/NimBLE-Arduino" = "1.4.1"
+"adafruit/Adafruit_BusIO" = "1.14.1"

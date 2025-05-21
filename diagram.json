@@ -1,0 +1,297 @@
+{
+  "version": 1,
+  "author": "Combined - With Original Issues - No Comments",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 105.6, "left": 158.44, "attrs": {} },
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "wifi_sensor",
+      "top": 115.8,
+      "left": 1218.6,
+      "attrs": { "label": "WiFi Humidity Sensor" }
+    },
+    {
+      "type": "wokwi-rfm95",
+      "id": "loraMod",
+      "top": 0,
+      "left": 130,
+      "attrs": { "label": "LoRaWAN Module (RFM95 Visual)" }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "humiditySensor",
+      "top": 528.3,
+      "left": 599.4,
+      "attrs": { "label": "Humidity Sensor (WiFi Visual)" }
+    },
+    {
+      "type": "wokwi-rfm95",
+      "id": "loraMod_dup1",
+      "top": 0,
+      "left": 130,
+      "attrs": { "label": "LoRaWAN Module (RFM95 Visual)" }
+    },
+    {
+      "type": "wokwi-mq135",
+      "id": "co2Sensor",
+      "top": 300,
+      "left": 330,
+      "attrs": { "label": "CO2 Sensor (Ethernet Visual)" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "ledStatus1",
+      "top": 0,
+      "left": -50,
+      "attrs": { "color": "blue", "label": "Status 1 (GPIO26)" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "resLed1",
+      "top": 40,
+      "left": -50,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "ledStatus2",
+      "top": 0,
+      "left": 0,
+      "attrs": { "color": "green", "label": "Status 2 (GPIO27)" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "resLed2",
+      "top": 40,
+      "left": 0,
+      "attrs": { "value": "220" }
+    },
+    { "type": "board-ds18b20", "id": "temp1", "top": 85.27, "left": 1021.68, "attrs": {} },
+    {
+      "type": "wokwi-pir-motion-sensor",
+      "id": "pir1",
+      "top": 589.6,
+      "left": 1010.22,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 704.75,
+      "left": 950.4,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": -5.65,
+      "left": 1488,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r3",
+      "top": 666.35,
+      "left": 672,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r4",
+      "top": 138.35,
+      "left": 864,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp2_orig",
+      "top": 566.4,
+      "left": 792.04,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "wifi_sensor1",
+      "top": 115.8,
+      "left": 460.2,
+      "attrs": { "label": "WiFi Humidity Sensor" }
+    },
+    { "type": "chip-lorawan-module", "id": "chip1", "top": 20.22, "left": 532.8, "attrs": {} },
+    { "type": "chip-ethernet-module", "id": "chip2", "top": 68.22, "left": 1310.4, "attrs": {} },
+    { "type": "wokwi-gas-sensor", "id": "gas1", "top": -45.3, "left": 1303, "attrs": {} },
+    {
+      "type": "wokwi-resistor",
+      "id": "r5",
+      "top": 32.75,
+      "left": 1507.2,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r6",
+      "top": 61.55,
+      "left": 1488,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r7",
+      "top": 80.75,
+      "left": 1488,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r8",
+      "top": 215.15,
+      "left": 825.6,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r9",
+      "top": 195.95,
+      "left": 854.4,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r12",
+      "top": 704.75,
+      "left": 672,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r13",
+      "top": 723.95,
+      "left": 672,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r14",
+      "top": 685.55,
+      "left": 672,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r10",
+      "top": 733.55,
+      "left": 950.4,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r15",
+      "top": 675.95,
+      "left": 950.4,
+      "attrs": { "value": "1000" }
+    },
+    { "type": "chip-ethernet-module", "id": "chip3", "top": 231.42, "left": -24, "attrs": {} },
+    { "type": "chip-lorawan-module", "id": "chip4", "top": 279.42, "left": -24, "attrs": {} },
+    {
+      "type": "wokwi-ntc-temperature-sensor",
+      "id": "ntc1",
+      "top": 453.8,
+      "left": 757.8,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r11",
+      "top": 493.55,
+      "left": 921.6,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r16",
+      "top": 474.35,
+      "left": 921.6,
+      "attrs": { "value": "1000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r17",
+      "top": 512.75,
+      "left": 921.6,
+      "attrs": { "value": "1000" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:GND.2", "loraMod:GND", "black", [ "v-60", "h-10" ] ],
+    [ "esp:3V3", "loraMod:3.3V", "red", [ "v-70", "h-10" ] ],
+    [ "esp:5", "loraMod:NSS", "blue", [ "v-50", "h-50" ] ],
+    [ "esp:18", "loraMod:SCK", "yellow", [ "v-40", "h-60" ] ],
+    [ "esp:23", "loraMod:MOSI", "orange", [ "v-30", "h-70" ] ],
+    [ "esp:19", "loraMod:MISO", "purple", [ "v-20", "h-80" ] ],
+    [ "esp:2", "loraMod:DIO0", "brown", [ "v-10", "h-90" ] ],
+    [ "esp:4", "loraMod:DIO1", "pink", [ "v0", "h-100" ] ],
+    [ "esp:17", "loraMod:RESET", "grey", [ "v10", "h-10" ] ],
+    [ "esp:3V3", "co2Sensor:VCC", "red", [ "h150", "v70", "h-50" ] ],
+    [ "esp:GND.1", "co2Sensor:GND", "black", [ "h140", "v60", "h-40" ] ],
+    [ "esp:34", "co2Sensor:AOUT", "orange", [ "v70", "h30" ] ],
+    [ "esp:26", "resLed1:1", "cyan", [ "v-100", "h-180", "v20" ] ],
+    [ "resLed1:2", "ledStatus1:A", "cyan", [] ],
+    [ "ledStatus1:C", "esp:GND.1", "black", [ "v-20", "h-150" ] ],
+    [ "esp:27", "resLed2:1", "lime", [ "v-100", "h-130", "v20" ] ],
+    [ "resLed2:2", "ledStatus2:A", "lime", [] ],
+    [ "ledStatus2:C", "esp:GND.1", "black", [] ],
+    [ "gas1:AOUT", "r2:1", "green", [ "h0" ] ],
+    [ "gas1:DOUT", "r5:1", "purple", [ "h0" ] ],
+    [ "gas1:GND", "r6:1", "black", [ "h0" ] ],
+    [ "r5:2", "wifi_sensor:0", "cyan", [ "v-9.6", "h162", "v86.4" ] ],
+    [ "r2:2", "wifi_sensor:A5", "green", [ "v0", "h267.6", "v211.2" ] ],
+    [ "r6:2", "wifi_sensor:1", "gold", [ "v-19.2", "h171.6", "v57.6", "h-240" ] ],
+    [ "r7:2", "wifi_sensor:2", "green", [ "v28.8", "h-91.7" ] ],
+    [ "gas1:VCC", "r7:1", "red", [ "h0" ] ],
+    [ "temp1:VCC", "r9:2", "red", [ "v0" ] ],
+    [ "temp1:DQ", "r8:2", "green", [ "v0" ] ],
+    [ "temp1:GND", "r4:2", "black", [ "v0" ] ],
+    [ "humiditySensor:GND", "r3:1", "black", [ "v0" ] ],
+    [ "humiditySensor:NC", "r14:1", "green", [ "v0" ] ],
+    [ "humiditySensor:SDA", "r12:1", "green", [ "v0" ] ],
+    [ "humiditySensor:VCC", "r13:1", "red", [ "v0" ] ],
+    [ "r3:2", "esp2_orig:25", "green", [ "v0" ] ],
+    [ "r14:2", "esp2_orig:27", "green", [ "v0" ] ],
+    [ "r12:2", "esp2_orig:12", "green", [ "v0" ] ],
+    [ "r13:2", "esp2_orig:13", "green", [ "v0" ] ],
+    [ "pir1:VCC", "r15:2", "red", [ "v0" ] ],
+    [ "pir1:OUT", "r1:2", "green", [ "v0" ] ],
+    [ "pir1:GND", "r10:2", "black", [ "v0" ] ],
+    [ "r15:1", "esp2_orig:5", "green", [ "v0" ] ],
+    [ "r1:1", "esp2_orig:4", "green", [ "v0" ] ],
+    [ "r10:1", "esp2_orig:15", "green", [ "v0" ] ],
+    [ "chip2:OUT", "wifi_sensor:4", "green", [ "h0" ] ],
+    [ "chip2:IN", "wifi_sensor:5", "green", [ "v0" ] ],
+    [ "chip2:GND", "wifi_sensor:11", "black", [ "h38.4", "v28.8" ] ],
+    [ "chip2:VCC", "wifi_sensor:13", "red", [ "h0" ] ],
+    [ "r9:1", "wifi_sensor1:0", "green", [ "v0" ] ],
+    [ "r4:1", "wifi_sensor1:2", "green", [ "v-124.8", "h-96" ] ],
+    [ "r8:1", "wifi_sensor1:3", "green", [ "v-182.4", "h-48" ] ],
+    [ "chip1:OUT", "wifi_sensor1:5", "green", [ "h0" ] ],
+    [ "wifi_sensor1:7", "chip1:IN", "green", [ "v-38.4", "h-15.6" ] ],
+    [ "chip1:GND", "wifi_sensor1:10", "black", [ "v38.4", "h76.1" ] ],
+    [ "chip1:VCC", "wifi_sensor1:A5.2", "red", [ "h-38.4", "v28.8", "h19.2" ] ],
+    [ "chip3:OUT", "esp:32", "green", [ "h40.21", "v-48" ] ],
+    [ "chip3:IN", "esp:33", "green", [ "v0", "h49.81", "v-38.4" ] ],
+    [ "chip3:VCC", "esp:34", "red", [ "h-19.2", "v-38.4" ] ],
+    [ "chip3:GND", "esp:25", "black", [ "h-9.6", "v9.6", "h172.8", "v-38.4" ] ],
+    [ "chip4:OUT", "esp:13", "green", [ "h30.61", "v-19.2" ] ],
+    [ "chip4:IN", "esp:D2", "green", [ "v0", "h49.81", "v-19.2" ] ],
+    [ "esp:D3", "chip4:GND", "green", [ "h-19.05", "v28.8", "h-163.2" ] ],
+    [ "chip4:VCC", "esp:CMD", "red", [ "h-38.4", "v67.2", "h211.2", "v-57.6" ] ],
+    [ "ntc1:GND", "r16:1", "black", [ "h28.8" ] ],
+    [ "ntc1:VCC", "r11:1", "red", [ "h0" ] ],
+    [ "ntc1:OUT", "r17:1", "green", [ "h19.2", "v9.5" ] ],
+    [ "r17:2", "esp2_orig:GND.2", "green", [ "v0" ] ],
+    [ "r11:2", "esp2_orig:23", "green", [ "v0", "h8.4", "v105.6" ] ],
+    [ "r16:2", "esp2_orig:22", "green", [ "v0", "h18", "v144" ] ]
+  ],
+  "dependencies": {}
+}

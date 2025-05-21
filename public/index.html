@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ESP32 Sensor Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+      min-height: 100vh;
+    }
+    .sensor-card {
+      margin-bottom: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      background: #fff;
+      border: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .sensor-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.13);
+    }
+    .sensor-title {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: #2a5298;
+    }
+    .sensor-value {
+      font-size: 2em;
+      font-weight: bold;
+      color: #1e3c72;
+    }
+    .sensor-timestamp {
+      font-size: 0.9em;
+      color: #888;
+    }
+    .chart-container {
+      position: relative;
+      height: 180px;
+      width: 100%;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <h1 class="text-center mb-4" style="color:#1e3c72; font-weight:700; letter-spacing:1px;">ESP32 GATEWAY Dashboard</h1>
+    <!-- Sensor Scan & Connect Section -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card sensor-card" style="background: linear-gradient(90deg, #f8ffae 0%, #43c6ac 100%);">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="sensor-title" style="color:#1e3c72;">Scan & Connect to Sensors</div>
+              <button class="btn btn-primary" id="scan-btn"><span class="bi bi-search"></span> Scan</button>
+            </div>
+            <div id="scan-status" class="mb-2" style="color:#1e3c72; font-size:1em;">Idle</div>
+            <ul class="list-group mb-2" id="scan-results" style="min-height:40px;"></ul>
+            <div id="connect-status" style="color:#388e3c; font-weight:500;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card sensor-card">
+          <div class="card-body">
+            <div class="sensor-title">WiFi Humidity Sensor</div>
+            <div class="sensor-value" id="wifi-value">N/A</div>
+            <div class="sensor-timestamp" id="wifi-timestamp">Last update: Never</div>
+            <div class="chart-container"><canvas id="wifi-chart"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card sensor-card">
+          <div class="card-body">
+            <div class="sensor-title">LoRaWAN Temperature Sensor</div>
+            <div class="sensor-value" id="lora-value">N/A</div>
+            <div class="sensor-timestamp" id="lora-timestamp">Last update: Never</div>
+            <div class="chart-container"><canvas id="lora-chart"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card sensor-card">
+          <div class="card-body">
+            <div class="sensor-title">BLE Vibration Sensor</div>
+            <div class="sensor-value" id="ble-value">N/A</div>
+            <div class="sensor-timestamp" id="ble-timestamp">Last update: Never</div>
+            <div class="chart-container"><canvas id="ble-chart"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card sensor-card">
+          <div class="card-body">
+            <div class="sensor-title">Ethernet CO2 Sensor</div>
+            <div class="sensor-value" id="ethernet-value">N/A</div>
+            <div class="sensor-timestamp" id="ethernet-timestamp">Last update: Never</div>
+            <div class="chart-container"><canvas id="ethernet-chart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Scan and Connect Section -->
+    <div class="card sensor-card mt-4">
+      <div class="card-body">
+        <div class="sensor-title" style="color:#16a085;">Scan & Connect to Other Sensors</div>
+        <div class="mb-3">
+          <button class="btn btn-primary" id="scan-btn">Scan for Sensors</button>
+          <span id="scan-status" class="ms-3 text-secondary">Idle</span>
+        </div>
+        <ul class="list-group mb-3" id="scan-results" style="max-width:400px;"></ul>
+        <div id="connect-status" class="text-success"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    // Chart.js datasets for each sensor
+    const wifiData = { labels: [], data: [] };
+    const loraData = { labels: [], data: [] };
+    const bleData = { labels: [], data: [] };
+    const ethernetData = { labels: [], data: [] };
+    // Chart.js chart instances
+    const wifiChart = new Chart(document.getElementById('wifi-chart').getContext('2d'), {
+      type: 'line',
+      data: { labels: wifiData.labels, datasets: [{ label: 'Humidity (%)', data: wifiData.data, borderColor: '#36a2eb', backgroundColor: 'rgba(54,162,235,0.1)', tension: 0.3 }] },
+      options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true } } }
+    });
+    const loraChart = new Chart(document.getElementById('lora-chart').getContext('2d'), {
+      type: 'line',
+      data: { labels: loraData.labels, datasets: [{ label: 'Temperature (°C)', data: loraData.data, borderColor: '#ff6384', backgroundColor: 'rgba(255,99,132,0.1)', tension: 0.3 }] },
+      options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true } } }
+    });
+    const bleChart = new Chart(document.getElementById('ble-chart').getContext('2d'), {
+      type: 'line',
+      data: { labels: bleData.labels, datasets: [{ label: 'Vibration (g)', data: bleData.data, borderColor: '#4bc0c0', backgroundColor: 'rgba(75,192,192,0.1)', tension: 0.3 }] },
+      options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true } } }
+    });
+    const ethernetChart = new Chart(document.getElementById('ethernet-chart').getContext('2d'), {
+      type: 'line',
+      data: { labels: ethernetData.labels, datasets: [{ label: 'CO2 (ppm)', data: ethernetData.data, borderColor: '#ffcd56', backgroundColor: 'rgba(255,205,86,0.1)', tension: 0.3 }] },
+      options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true } } }
+    });
+
+    function updateSensorDisplay(sensorId, data) {
+      document.getElementById(`${sensorId}-value`).textContent = data.value;
+      const timestamp = data.lastUpdate ? new Date(data.lastUpdate).toLocaleString() : 'Never';
+      document.getElementById(`${sensorId}-timestamp`).textContent = `Last update: ${timestamp}`;
+    }
+
+    function extractValue(sensor, valueStr) {
+      if (sensor === 'wifi') {
+        // Example: "Temperature: 25.5C, Humidity: 48%"
+        const match = valueStr.match(/Humidity:\s*([\d.]+)/);
+        return match ? parseFloat(match[1]) : null;
+      } else if (sensor === 'lora') {
+        // Example: "Temperature: 25.5C"
+        const match = valueStr.match(/Temperature:\s*([\d.]+)/);
+        return match ? parseFloat(match[1]) : null;
+      } else if (sensor === 'ble') {
+        // Example: "Vibration: 0.5g"
+        const match = valueStr.match(/Vibration:\s*([\d.]+)/);
+        return match ? parseFloat(match[1]) : null;
+      } else if (sensor === 'ethernet') {
+        // Example: "CO2: 450 ppm"
+        const match = valueStr.match(/CO2:\s*([\d.]+)/);
+        return match ? parseFloat(match[1]) : null;
+      }
+      return null;
+    }
+
+    function addChartData(chart, dataArr, value) {
+      const now = new Date().toLocaleTimeString();
+      dataArr.labels.push(now);
+      dataArr.data.push(value);
+      if (dataArr.labels.length > 20) {
+        dataArr.labels.shift();
+        dataArr.data.shift();
+      }
+      chart.update();
+    }
+
+    socket.on('sensor-update', (data) => {
+      updateSensorDisplay('wifi', data.wifi);
+      updateSensorDisplay('lora', data.lora);
+      updateSensorDisplay('ble', data.ble);
+      updateSensorDisplay('ethernet', data.ethernet);
+      // Update charts
+      const wifiVal = extractValue('wifi', data.wifi.value);
+      if (wifiVal !== null) addChartData(wifiChart, wifiData, wifiVal);
+      const loraVal = extractValue('lora', data.lora.value);
+      if (loraVal !== null) addChartData(loraChart, loraData, loraVal);
+      const bleVal = extractValue('ble', data.ble.value);
+      if (bleVal !== null) addChartData(bleChart, bleData, bleVal);
+      const ethVal = extractValue('ethernet', data.ethernet.value);
+      if (ethVal !== null) addChartData(ethernetChart, ethernetData, ethVal);
+    });
+
+    // Scan & Connect logic (UI only)
+    const scanBtn = document.getElementById('scan-btn');
+    const scanStatus = document.getElementById('scan-status');
+    const scanResults = document.getElementById('scan-results');
+    const connectStatus = document.getElementById('connect-status');
+    scanBtn.addEventListener('click', () => {
+      scanStatus.textContent = 'Scanning...';
+      scanResults.innerHTML = '';
+      connectStatus.textContent = '';
+      setTimeout(() => {
+        // Simulate found sensors
+        const found = [
+          { id: 'BLE-1234', type: 'BLE', rssi: -60 },
+          { id: 'WiFi-5678', type: 'WiFi', rssi: -45 },
+          { id: 'LoRa-9012', type: 'LoRa', rssi: -80 }
+        ];
+        scanStatus.textContent = `Found ${found.length} sensors`;
+        found.forEach(sensor => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item d-flex justify-content-between align-items-center';
+          li.innerHTML = `<span><b>${sensor.type}</b> - ${sensor.id} <span class='text-muted'>(RSSI: ${sensor.rssi})</span></span>` +
+            `<button class='btn btn-sm btn-outline-success ms-2 connect-btn'>Connect</button>`;
+          li.querySelector('.connect-btn').addEventListener('click', () => {
+            connectStatus.textContent = `Connecting to ${sensor.id}...`;
+            setTimeout(() => {
+              connectStatus.textContent = `Connected to ${sensor.id}!`;
+            }, 1200);
+          });
+          scanResults.appendChild(li);
+        });
+      }, 1200);
+    });
+  </script>
+</body>
+</html>

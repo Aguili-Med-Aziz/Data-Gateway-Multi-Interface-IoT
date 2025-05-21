@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "author": "AI - Isolated Circuits",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp",
+      "top": 200,
+      "left": 300,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-led",
+      "id": "ledStatus1",
+      "top": 100,
+      "left": 150,
+      "attrs": { "color": "blue", "label": "Status 1 (G26)" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "resLed1",
+      "top": 140,
+      "left": 150,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "ledStatus2",
+      "top": 100,
+      "left": 200,
+      "attrs": { "color": "green", "label": "Status 2 (G27)" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "resLed2",
+      "top": 140,
+      "left": 200,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-rfm95",
+      "id": "loraModCircuit",
+      "top": 0,
+      "left": 280,
+      "attrs": { "label": "LoRaWAN Module Circuit\n(RFM95 Visual)" }
+    },
+    {
+      "type": "wokwi-dht11",
+      "id": "humidityCircuit",
+      "top": 200,
+      "left": 0,
+      "attrs": { "label": "Humidity Sensor Circuit\n(DHT11 - WiFi Visual)" }
+    },
+    {
+      "type": "wokwi-mpu6050",
+      "id": "vibrationCircuit",
+      "top": 0,
+      "left": 0,
+      "attrs": { "label": "Vibration Sensor Circuit\n(MPU6050 - BLE Visual)" }
+    },
+    {
+      "type": "wokwi-mq135",
+      "id": "co2Circuit",
+      "top": 400,
+      "left": 280,
+      "attrs": { "label": "CO2 Sensor Circuit\n(MQ135 - Ethernet Visual)" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+
+    [ "esp:26", "resLed1:1", "cyan", [ "v-60", "h-130" ] ],
+    [ "resLed1:2", "ledStatus1:A", "cyan", [] ],
+    [ "ledStatus1:C", "esp:GND.1", "black", [ "v-20", "h-100", "v20", "h-20" ] ],
+    [ "esp:27", "resLed2:1", "lime", [ "v-60", "h-80" ] ],
+    [ "resLed2:2", "ledStatus2:A", "lime", [] ],
+    [ "ledStatus2:C", "esp:GND.1", "black", [] ],
+
+    [ "esp:GND.2", "loraModCircuit:GND", "black", [ "v-130", "h-10" ] ],
+    [ "esp:3V3", "loraModCircuit:3.3V", "red", [ "v-140", "h-10" ] ],
+    [ "esp:5", "loraModCircuit:NSS", "blue", [ "v-160", "h-50" ] ],
+    [ "esp:18", "loraModCircuit:SCK", "yellow", [ "v-150", "h-60" ] ],
+    [ "esp:23", "loraModCircuit:MOSI", "orange", [ "v-140", "h-70" ] ],
+    [ "esp:19", "loraModCircuit:MISO", "purple", [ "v-130", "h-80" ] ],
+    [ "esp:2", "loraModCircuit:DIO0", "brown", [ "v-120", "h-90" ] ],
+    [ "esp:4", "loraModCircuit:DIO1", "pink", [ "v-110", "h-100" ] ],
+    [ "esp:17", "loraModCircuit:RESET", "grey", [ "v-100", "h-10" ] ],
+
+    [ "esp:3V3", "humidityCircuit:VCC", "red", [ "h-250", "v-10" ] ],
+    [ "esp:GND.1", "humidityCircuit:GND", "black", [ "h-240" ] ],
+    [ "esp:16", "humidityCircuit:SDA", "green", [ "v0", "h-200" ] ],
+
+    [ "esp:3V3", "vibrationCircuit:VCC", "red", [ "v-150", "h-280" ] ],
+    [ "esp:GND.1", "vibrationCircuit:GND", "black", [ "v-160", "h-270" ] ],
+    [ "esp:21", "vibrationCircuit:SDA", "blue", [ "v-180", "h-230" ] ],
+    [ "esp:22", "vibrationCircuit:SCL", "purple", [ "v-170", "h-220" ] ],
+
+    [ "esp:3V3", "co2Circuit:VCC", "red", [ "v150", "h-10" ] ],
+    [ "esp:GND.2", "co2Circuit:GND", "black", [ "v160", "h-10" ] ],
+    [ "esp:34", "co2Circuit:AOUT", "orange", [ "v130", "h50" ] ]
+  ],
+  "dependencies": {}
+}
