@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ESP32 Multi-Interface IoT Data Gateway
 
 A comprehensive IoT data gateway that aggregates and processes sensor data from multiple interfaces (WiFi, BLE, LoRa, and Ethernet) and provides a real-time web dashboard for monitoring and control. This gateway serves as a central hub for collecting, processing, and visualizing data from various IoT sensors and devices.
@@ -187,3 +188,7 @@ curl -X POST -H "Content-Type: text/plain" --data "CO2: 450 ppm" http://localhos
 ## Contributing
 
 [Add contribution guidelines here] 
+=======
+# Data-Gateway-Multi-Interface-IoT
+A comprehensive IoT data gateway that aggregates and processes sensor data from multiple interfaces (WiFi, BLE, LoRa, and Ethernet) and provides a real-time web dashboard for monitoring and control. This gateway serves as a central hub for collecting, processing, and visualizing data from various IoT sensors and devices.
+>>>>>>> 4a9053503175e54e29737f4486924ac324c3da1e
