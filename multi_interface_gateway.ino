@@ -6,12 +6,14 @@ const unsigned long WIFI_INTERVAL = 10000;    // 10 seconds for humidity
 const unsigned long LORA_INTERVAL = 3000;     // 3 seconds for temperature
 const unsigned long BLE_INTERVAL = 2000;      // 2 seconds for BLE
 const unsigned long ETHERNET_INTERVAL = 4000;  // 4 seconds for CO2
+const unsigned long MOTION_INTERVAL = 1000;   // 1 second for motion
 
 // Variables to store last update time for each sensor
 unsigned long lastWifiUpdate = 0;
 unsigned long lastLoraUpdate = 0;
 unsigned long lastBleUpdate = 0;
 unsigned long lastEthernetUpdate = 0;
+unsigned long lastMotionUpdate = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -57,6 +59,15 @@ void loop() {
     Serial.print(co2);
     Serial.println(" ppm");
     lastEthernetUpdate = currentMillis;
+  }
+
+  // Check for Motion update
+  if (currentMillis - lastMotionUpdate >= MOTION_INTERVAL) {
+    bool motion = random(0, 2) > 0; // Random motion detection
+    printTimestamp();
+    Serial.print(" - motion: ");
+    Serial.println(motion ? "Movement Detected" : "No Movement");
+    lastMotionUpdate = currentMillis;
   }
 }
 
