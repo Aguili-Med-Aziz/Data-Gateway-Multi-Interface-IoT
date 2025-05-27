@@ -6,7 +6,7 @@ const unsigned long WIFI_INTERVAL = 10000;    // 10 seconds for humidity
 const unsigned long LORA_INTERVAL = 3000;     // 3 seconds for temperature
 const unsigned long BLE_INTERVAL = 2000;      // 2 seconds for BLE
 const unsigned long ETHERNET_INTERVAL = 4000;  // 4 seconds for CO2
-const unsigned long MOTION_INTERVAL = 1000;   // 1 second for motion
+const unsigned long MOTION_INTERVAL = 3000;   // 1 second for motion
 
 // Variables to store last update time for each sensor
 unsigned long lastWifiUpdate = 0;
@@ -18,7 +18,7 @@ unsigned long lastMotionUpdate = 0;
 void setup() {
   Serial.begin(9600);
   // Set initial time (for demo purposes using a fixed date)
-  setTime(20, 40, 0, 21, 5, 2025);
+  setTime(20, 40, 0, 27, 5, 2025);
 }
 
 void loop() {
