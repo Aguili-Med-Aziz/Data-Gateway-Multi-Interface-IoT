@@ -4,6 +4,7 @@
   <title>ESP32 Sensor Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     body {
@@ -38,203 +39,802 @@
     }
     .chart-container {
       position: relative;
-      height: 180px;
+      height: 300px;
       width: 100%;
       margin-top: 10px;
+    }
+    .sensor-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .sensor-list-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .sensor-list-item:hover {
+      background-color: #f8f9fa;
+    }
+    .graph-controls {
+      position: relative;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .graph-controls button {
+      margin: 0 5px;
+    }
+    .history-modal .modal-dialog {
+      max-width: 800px;
+    }
+    .history-chart {
+      height: 400px;
+      position: relative;
+    }
+    .history-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 15px;
+      gap: 10px;
+    }
+    .history-controls button {
+      min-width: 100px;
+    }
+    .history-info {
+      text-align: center;
+      margin-top: 10px;
+      color: #666;
     }
   </style>
 </head>
 <body>
   <div class="container mt-4">
     <h1 class="text-center mb-4" style="color:#1e3c72; font-weight:700; letter-spacing:1px;">ESP32 GATEWAY Dashboard</h1>
-    <!-- Sensor Scan & Connect Section -->
+    
+    <!-- Scan Section -->
     <div class="row mb-4">
       <div class="col-12">
-        <div class="card sensor-card" style="background: linear-gradient(90deg, #f8ffae 0%, #43c6ac 100%);">
+        <div class="card sensor-card">
           <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <div class="sensor-title" style="color:#1e3c72;">Scan & Connect to Sensors</div>
-              <button class="btn btn-primary" id="scan-btn"><span class="bi bi-search"></span> Scan</button>
+            <h5 class="sensor-title mb-3">Scan for Sensors</h5>
+            <div class="d-flex justify-content-center gap-3">
+              <button class="btn btn-primary scan-btn" data-type="wifi">
+                <i class="bi bi-wifi"></i> Scan WiFi Sensors
+              </button>
+              <button class="btn btn-primary scan-btn" data-type="lora">
+                <i class="bi bi-broadcast"></i> Scan LoRaWAN Sensors
+              </button>
+              <button class="btn btn-primary scan-btn" data-type="ble">
+                <i class="bi bi-bluetooth"></i> Scan BLE Sensors
+              </button>
+              <button class="btn btn-primary scan-btn" data-type="ethernet">
+                <i class="bi bi-hdd-network"></i> Scan Ethernet Sensors
+              </button>
             </div>
-            <div id="scan-status" class="mb-2" style="color:#1e3c72; font-size:1em;">Idle</div>
-            <ul class="list-group mb-2" id="scan-results" style="min-height:40px;"></ul>
-            <div id="connect-status" style="color:#388e3c; font-weight:500;"></div>
+            <div id="scan-status" class="text-center mt-3" style="display: none;">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Scanning...</span>
+              </div>
+              <span class="ms-2">Scanning for sensors...</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-6">
+
+    <!-- Sensor List Section -->
+    <div class="row mb-4">
+      <div class="col-12">
         <div class="card sensor-card">
           <div class="card-body">
-            <div class="sensor-title">WiFi Humidity Sensor</div>
-            <div class="sensor-value" id="wifi-value">N/A</div>
-            <div class="sensor-timestamp" id="wifi-timestamp">Last update: Never</div>
-            <div class="chart-container"><canvas id="wifi-chart"></canvas></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card sensor-card">
-          <div class="card-body">
-            <div class="sensor-title">LoRaWAN Temperature Sensor</div>
-            <div class="sensor-value" id="lora-value">N/A</div>
-            <div class="sensor-timestamp" id="lora-timestamp">Last update: Never</div>
-            <div class="chart-container"><canvas id="lora-chart"></canvas></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card sensor-card">
-          <div class="card-body">
-            <div class="sensor-title">BLE Vibration Sensor</div>
-            <div class="sensor-value" id="ble-value">N/A</div>
-            <div class="sensor-timestamp" id="ble-timestamp">Last update: Never</div>
-            <div class="chart-container"><canvas id="ble-chart"></canvas></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card sensor-card">
-          <div class="card-body">
-            <div class="sensor-title">Ethernet CO2 Sensor</div>
-            <div class="sensor-value" id="ethernet-value">N/A</div>
-            <div class="sensor-timestamp" id="ethernet-timestamp">Last update: Never</div>
-            <div class="chart-container"><canvas id="ethernet-chart"></canvas></div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="sensor-title mb-0">Available Sensors</h5>
+              <button class="btn btn-primary" id="refresh-sensors">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+              </button>
+            </div>
+            <div class="sensor-list" id="sensor-list">
+              <!-- Sensor list will be populated dynamically -->
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- Scan and Connect Section -->
-    <div class="card sensor-card mt-4">
-      <div class="card-body">
-        <div class="sensor-title" style="color:#16a085;">Scan & Connect to Other Sensors</div>
-        <div class="mb-3">
-          <button class="btn btn-primary" id="scan-btn">Scan for Sensors</button>
-          <span id="scan-status" class="ms-3 text-secondary">Idle</span>
+
+    <!-- Sensor Graphs Section -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card sensor-card">
+          <div class="card-body">
+            <h5 class="sensor-title mb-3">Sensor Graphs</h5>
+            <div id="sensor-graphs">
+              <!-- Sensor graphs will be populated dynamically -->
+            </div>
+          </div>
         </div>
-        <ul class="list-group mb-3" id="scan-results" style="max-width:400px;"></ul>
-        <div id="connect-status" class="text-success"></div>
+      </div>
+    </div>
+
+    <!-- Selected Sensors Display -->
+    <div class="row" id="selected-sensors">
+      <!-- Selected sensor cards will be added here -->
+    </div>
+  </div>
+
+  <!-- History Modal -->
+  <div class="modal fade" id="historyModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Sensor History</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="history-chart">
+            <canvas id="historyChart"></canvas>
+          </div>
+          <div class="history-controls">
+            <button class="btn btn-outline-primary" id="historyPrev">
+              <i class="bi bi-chevron-left"></i> Previous
+            </button>
+            <button class="btn btn-outline-primary" id="historyNext">
+              Next <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+          <div class="history-info" id="historyInfo"></div>
+        </div>
       </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const socket = io();
-    // Chart.js datasets for each sensor
-    const wifiData = { labels: [], data: [] };
-    const loraData = { labels: [], data: [] };
-    const bleData = { labels: [], data: [] };
-    const ethernetData = { labels: [], data: [] };
-    // Chart.js chart instances
-    const wifiChart = new Chart(document.getElementById('wifi-chart').getContext('2d'), {
-      type: 'line',
-      data: { labels: wifiData.labels, datasets: [{ label: 'Humidity (%)', data: wifiData.data, borderColor: '#36a2eb', backgroundColor: 'rgba(54,162,235,0.1)', tension: 0.3 }] },
-      options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true } } }
+    const socket = io({
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000
     });
-    const loraChart = new Chart(document.getElementById('lora-chart').getContext('2d'), {
-      type: 'line',
-      data: { labels: loraData.labels, datasets: [{ label: 'Temperature (°C)', data: loraData.data, borderColor: '#ff6384', backgroundColor: 'rgba(255,99,132,0.1)', tension: 0.3 }] },
-      options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true } } }
+
+    // Connection status handling
+    socket.on('connect', () => {
+      console.log('Connected to server');
+      const sensorList = document.getElementById('sensor-list');
+      sensorList.innerHTML = '<div class="text-center p-3">Click a scan button to discover sensors</div>';
     });
-    const bleChart = new Chart(document.getElementById('ble-chart').getContext('2d'), {
-      type: 'line',
-      data: { labels: bleData.labels, datasets: [{ label: 'Vibration (g)', data: bleData.data, borderColor: '#4bc0c0', backgroundColor: 'rgba(75,192,192,0.1)', tension: 0.3 }] },
-      options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true } } }
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from server');
+      const sensorList = document.getElementById('sensor-list');
+      sensorList.innerHTML = '<div class="text-center p-3 text-danger">Disconnected from server. Please refresh the page.</div>';
     });
-    const ethernetChart = new Chart(document.getElementById('ethernet-chart').getContext('2d'), {
-      type: 'line',
-      data: { labels: ethernetData.labels, datasets: [{ label: 'CO2 (ppm)', data: ethernetData.data, borderColor: '#ffcd56', backgroundColor: 'rgba(255,205,86,0.1)', tension: 0.3 }] },
-      options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { beginAtZero: true } } }
+
+    socket.on('connect_error', (error) => {
+      console.error('Connection error:', error);
+      const sensorList = document.getElementById('sensor-list');
+      sensorList.innerHTML = '<div class="text-center p-3 text-danger">Connection error. Please check if the server is running.</div>';
+    });
+
+    socket.on('connection-status', (data) => {
+      console.log('Connection status:', data);
+    });
+
+    const sensorTypes = {
+      'wifi-1': { name: 'WiFi Humidity Sensor', unit: '%', color: '#36a2eb' },
+      'lora-1': { name: 'LoRaWAN Temperature Sensor', unit: '°C', color: '#ff6384' },
+      'ble-1': { name: 'BLE Vibration Sensor', unit: 'g', color: '#4bc0c0' },
+      'ethernet-1': { name: 'Ethernet CO2 Sensor', unit: 'ppm', color: '#ffcd56' }
+    };
+
+    const charts = {};
+    const sensorData = {};
+    const isPlaying = {};
+    const availableSensors = new Map();
+    let historyChart = null;
+    let currentHistoryPage = 0;
+    const HISTORY_PAGE_SIZE = 20;
+    let currentSensorId = null;
+    const sensorHistory = {}; // Store complete history for each sensor
+
+    // Initialize sensor data and charts
+    Object.keys(sensorTypes).forEach(sensorId => {
+      sensorData[sensorId] = { labels: [], data: [] };
+      sensorHistory[sensorId] = { timestamps: [], values: [] }; // Initialize history storage
+      isPlaying[sensorId] = false; // Start in paused state
+    });
+
+    function createSensorCard(sensorId) {
+      console.log('Creating sensor card for:', sensorId);
+      const sensor = sensorTypes[sensorId];
+      const card = document.createElement('div');
+      card.className = 'col-12 mb-4';
+      card.innerHTML = `
+        <div class="card sensor-card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="sensor-title">${sensor.name}</div>
+              <div class="sensor-value" id="${sensorId}-value">N/A</div>
+            </div>
+            <div class="sensor-timestamp mb-3" id="${sensorId}-timestamp">Last update: Never</div>
+            <div class="chart-container">
+              <canvas id="${sensorId}-chart"></canvas>
+            </div>
+            <div class="graph-controls mt-3">
+              <button class="btn btn-sm btn-outline-primary zoom-in" title="Zoom In">
+                <i class="bi bi-zoom-in"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-primary zoom-out" title="Zoom Out">
+                <i class="bi bi-zoom-out"></i>
+              </button>
+              <button class="btn btn-sm btn-success play-pause" title="Play/Pause">
+                <i class="bi bi-pause-fill"></i>
+              </button>
+              <button class="btn btn-sm btn-info history" title="History">
+                <i class="bi bi-clock-history"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Add the card to the DOM first
+      const sensorList = document.getElementById('sensor-list');
+      sensorList.appendChild(card);
+
+      // Initialize the chart after the card is in the DOM
+      setTimeout(() => {
+        initializeChart(sensorId);
+      }, 100);
+
+      return card;
+    }
+
+    function initializeChart(sensorId) {
+      console.log('Initializing chart for sensor:', sensorId);
+      const canvas = document.getElementById(`${sensorId}-chart`);
+      if (!canvas) {
+        console.error('Canvas element not found for sensor:', sensorId);
+        return;
+      }
+
+      const ctx = canvas.getContext('2d');
+      const sensor = sensorTypes[sensorId];
+      if (!sensor) {
+        console.error('Sensor type not found for:', sensorId);
+        return;
+      }
+      
+      // Initialize data arrays if they don't exist
+      if (!sensorData[sensorId]) {
+        sensorData[sensorId] = { labels: [], data: [] };
+      }
+      if (isPlaying[sensorId] === undefined) {
+        isPlaying[sensorId] = false; // Start in paused state
+      }
+      
+      // Destroy existing chart if it exists
+      if (charts[sensorId]) {
+        charts[sensorId].destroy();
+      }
+      
+      charts[sensorId] = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: sensorData[sensorId].labels,
+          datasets: [{
+            label: `${sensor.name} (${sensor.unit})`,
+            data: sensorData[sensorId].data,
+            borderColor: sensor.color,
+            backgroundColor: `${sensor.color}20`,
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: {
+            duration: 0 // Disable animation for real-time updates
+          },
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            x: { 
+              display: true,
+              title: {
+                display: true,
+                text: 'Time'
+              },
+              ticks: {
+                maxRotation: 0,
+                autoSkip: true,
+                maxTicksLimit: 5
+              }
+            },
+            y: { 
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: sensor.unit
+              }
+            }
+          }
+        }
+      });
+
+      // Add event listeners for controls
+      const card = canvas.closest('.sensor-card');
+      
+      // Zoom In
+      const zoomInBtn = card.querySelector('.zoom-in');
+      zoomInBtn.addEventListener('click', () => {
+        const chart = charts[sensorId];
+        if (chart) {
+          const currentMax = chart.options.scales.y.max || 100;
+          const newMax = Math.max(currentMax * 0.8, 10); // Prevent zooming in too much
+          chart.options.scales.y.min = 0;
+          chart.options.scales.y.max = newMax;
+          chart.update('none');
+        }
+      });
+
+      // Zoom Out
+      const zoomOutBtn = card.querySelector('.zoom-out');
+      zoomOutBtn.addEventListener('click', () => {
+        const chart = charts[sensorId];
+        if (chart) {
+          const currentMax = chart.options.scales.y.max || 100;
+          const newMax = currentMax * 1.2;
+          chart.options.scales.y.min = 0;
+          chart.options.scales.y.max = newMax;
+          chart.update('none');
+        }
+      });
+
+      // Play/Pause
+      const playPauseBtn = card.querySelector('.play-pause');
+      playPauseBtn.innerHTML = isPlaying[sensorId] ? 
+        '<i class="bi bi-pause-fill"></i>' : 
+        '<i class="bi bi-play-fill"></i>';
+      
+      playPauseBtn.addEventListener('click', () => {
+        isPlaying[sensorId] = !isPlaying[sensorId];
+        playPauseBtn.innerHTML = isPlaying[sensorId] ? 
+          '<i class="bi bi-pause-fill"></i>' : 
+          '<i class="bi bi-play-fill"></i>';
+        
+        // Emit play/pause state to server
+        socket.emit('sensor-play-pause', {
+          sensorId: sensorId,
+          isPlaying: isPlaying[sensorId]
+        });
+      });
+
+      // History
+      const historyBtn = card.querySelector('.history');
+      historyBtn.addEventListener('click', () => {
+        showHistory(sensorId);
+      });
+
+      console.log('Chart initialized for sensor:', sensorId);
+    }
+
+    function showHistory(sensorId) {
+      const sensor = sensorTypes[sensorId];
+      if (!sensor) {
+        console.error('Sensor type not found for:', sensorId);
+        return;
+      }
+
+      const modal = new bootstrap.Modal(document.getElementById('historyModal'));
+      currentSensorId = sensorId; // Store the current sensor ID
+      
+      if (historyChart) {
+        historyChart.destroy();
+      }
+
+      // Reset page counter
+      currentHistoryPage = 0;
+
+      function updateHistoryChart() {
+        if (!currentSensorId || !sensorHistory[currentSensorId]) return;
+
+        const ctx = document.getElementById('historyChart').getContext('2d');
+        const history = sensorHistory[currentSensorId];
+        const startIdx = currentHistoryPage * HISTORY_PAGE_SIZE;
+        const endIdx = Math.min(startIdx + HISTORY_PAGE_SIZE, history.values.length);
+        
+        const pageData = {
+          labels: history.timestamps.slice(startIdx, endIdx).map(ts => new Date(ts).toLocaleTimeString()),
+          data: history.values.slice(startIdx, endIdx)
+        };
+
+        if (historyChart) {
+          historyChart.destroy();
+        }
+
+        historyChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: pageData.labels,
+            datasets: [{
+              label: `${sensor.name} (${sensor.unit})`,
+              data: pageData.data,
+              borderColor: sensor.color,
+              backgroundColor: `${sensor.color}20`,
+              tension: 0.3,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: `${sensor.name} History`
+              }
+            },
+            scales: {
+              x: {
+                display: true,
+                title: {
+                  display: true,
+                  text: 'Time'
+                }
+              },
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: sensor.unit
+                }
+              }
+            }
+          }
+        });
+
+        // Update navigation buttons and info
+        const totalPages = Math.ceil(history.values.length / HISTORY_PAGE_SIZE);
+        const prevBtn = document.getElementById('historyPrev');
+        const nextBtn = document.getElementById('historyNext');
+        const infoText = document.getElementById('historyInfo');
+
+        prevBtn.disabled = currentHistoryPage === 0;
+        nextBtn.disabled = currentHistoryPage >= totalPages - 1;
+        
+        infoText.textContent = `Page ${currentHistoryPage + 1} of ${totalPages} (Showing ${pageData.data.length} of ${history.values.length} data points)`;
+      }
+
+      // Remove existing event listeners
+      const prevBtn = document.getElementById('historyPrev');
+      const nextBtn = document.getElementById('historyNext');
+      const newPrevBtn = prevBtn.cloneNode(true);
+      const newNextBtn = nextBtn.cloneNode(true);
+      prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
+      nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
+
+      // Add new event listeners
+      newPrevBtn.addEventListener('click', () => {
+        if (currentHistoryPage > 0) {
+          currentHistoryPage--;
+          updateHistoryChart();
+        }
+      });
+
+      newNextBtn.addEventListener('click', () => {
+        const totalPages = Math.ceil(sensorHistory[currentSensorId].values.length / HISTORY_PAGE_SIZE);
+        if (currentHistoryPage < totalPages - 1) {
+          currentHistoryPage++;
+          updateHistoryChart();
+        }
+      });
+
+      // Add download button
+      const downloadBtn = document.createElement('button');
+      downloadBtn.className = 'btn btn-success ms-2';
+      downloadBtn.innerHTML = '<i class="bi bi-download"></i> Download CSV';
+      downloadBtn.addEventListener('click', () => downloadSensorHistory(sensorId));
+      
+      const historyControls = document.querySelector('.history-controls');
+      if (!historyControls.querySelector('.btn-success')) {
+        historyControls.appendChild(downloadBtn);
+      }
+
+      // Initial chart update
+      updateHistoryChart();
+      modal.show();
+    }
+
+    function downloadSensorHistory(sensorId) {
+      const sensor = sensorTypes[sensorId];
+      if (!sensor || !sensorHistory[sensorId]) {
+        console.error('No history data available for sensor:', sensorId);
+        return;
+      }
+
+      const history = sensorHistory[sensorId];
+      const csvContent = [
+        ['Timestamp', `${sensor.name} (${sensor.unit})`],
+        ...history.timestamps.map((timestamp, index) => [
+          new Date(timestamp).toLocaleString(),
+          history.values[index]
+        ])
+      ].map(row => row.join(',')).join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${sensor.name.replace(/\s+/g, '_')}_history.csv`);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function updateSensorList(type) {
+      console.log('Updating sensor list for type:', type);
+      const sensorList = document.getElementById('sensor-list');
+      sensorList.innerHTML = '<div class="text-center p-3">Loading sensors...</div>';
+
+      // Get available sensors for the specified type
+      socket.emit('get-available-sensors', type);
+    }
+
+    // Handle available sensors update
+    socket.on('available-sensors', (sensors) => {
+      console.log('Received available sensors:', sensors);
+      const sensorList = document.getElementById('sensor-list');
+      
+      if (!sensors || sensors.length === 0) {
+        sensorList.innerHTML = '<div class="text-center p-3">No sensors available</div>';
+        return;
+      }
+
+      // Create container for checkboxes
+      sensorList.innerHTML = '<div id="sensor-checkboxes" class="mb-4"></div>';
+      const checkboxContainer = document.getElementById('sensor-checkboxes');
+
+      sensors.forEach(sensor => {
+        const item = document.createElement('div');
+        item.className = 'sensor-list-item d-flex justify-content-between align-items-center';
+        item.innerHTML = `
+          <div>
+            <input type="checkbox" class="form-check-input me-2" id="sensor-${sensor.id}">
+            <label for="sensor-${sensor.id}">${sensor.name}</label>
+          </div>
+          <span class="badge bg-primary">${sensor.unit}</span>
+        `;
+
+        const checkbox = item.querySelector(`#sensor-${sensor.id}`);
+        checkbox.addEventListener('change', (e) => {
+          const existingCard = document.querySelector(`#${sensor.id}-chart`);
+          
+          if (e.target.checked) {
+            if (!existingCard) {
+              // Create sensor card
+              const card = document.createElement('div');
+              card.className = 'col-12 mb-4';
+              card.innerHTML = `
+                <div class="card sensor-card">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <div class="sensor-title">${sensor.name}</div>
+                      <div class="sensor-value" id="${sensor.id}-value">N/A</div>
+                    </div>
+                    <div class="sensor-timestamp mb-3" id="${sensor.id}-timestamp">Last update: Never</div>
+                    <div class="chart-container">
+                      <canvas id="${sensor.id}-chart"></canvas>
+                    </div>
+                    <div class="graph-controls mt-3">
+                      <button class="btn btn-sm btn-outline-primary zoom-in" title="Zoom In">
+                        <i class="bi bi-zoom-in"></i>
+                      </button>
+                      <button class="btn btn-sm btn-outline-primary zoom-out" title="Zoom Out">
+                        <i class="bi bi-zoom-out"></i>
+                      </button>
+                      <button class="btn btn-sm btn-success play-pause" title="Play/Pause">
+                        <i class="bi bi-pause-fill"></i>
+                      </button>
+                      <button class="btn btn-sm btn-info history" title="History">
+                        <i class="bi bi-clock-history"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              `;
+
+              // Add the card to the graph container
+              const graphContainer = document.getElementById('sensor-graphs');
+              graphContainer.appendChild(card);
+
+              // Initialize the chart
+              setTimeout(() => {
+                initializeChart(sensor.id);
+                // Subscribe to sensor updates
+                socket.emit('subscribe-sensor', sensor.id);
+                // Start receiving data immediately
+                socket.emit('get-sensor-data', sensor.id);
+              }, 100);
+            }
+          } else {
+            if (existingCard) {
+              const card = existingCard.closest('.col-12');
+              card.remove();
+              if (charts[sensor.id]) {
+                charts[sensor.id].destroy();
+                delete charts[sensor.id];
+              }
+              // Unsubscribe from sensor updates
+              socket.emit('unsubscribe-sensor', sensor.id);
+            }
+          }
+        });
+
+        checkboxContainer.appendChild(item);
+      });
     });
 
     function updateSensorDisplay(sensorId, data) {
-      document.getElementById(`${sensorId}-value`).textContent = data.value;
-      const timestamp = data.lastUpdate ? new Date(data.lastUpdate).toLocaleString() : 'Never';
-      document.getElementById(`${sensorId}-timestamp`).textContent = `Last update: ${timestamp}`;
-    }
-
-    function extractValue(sensor, valueStr) {
-      if (sensor === 'wifi') {
-        // Example: "Temperature: 25.5C, Humidity: 48%"
-        const match = valueStr.match(/Humidity:\s*([\d.]+)/);
-        return match ? parseFloat(match[1]) : null;
-      } else if (sensor === 'lora') {
-        // Example: "Temperature: 25.5C"
-        const match = valueStr.match(/Temperature:\s*([\d.]+)/);
-        return match ? parseFloat(match[1]) : null;
-      } else if (sensor === 'ble') {
-        // Example: "Vibration: 0.5g"
-        const match = valueStr.match(/Vibration:\s*([\d.]+)/);
-        return match ? parseFloat(match[1]) : null;
-      } else if (sensor === 'ethernet') {
-        // Example: "CO2: 450 ppm"
-        const match = valueStr.match(/CO2:\s*([\d.]+)/);
-        return match ? parseFloat(match[1]) : null;
+      console.log('Updating display for sensor:', sensorId, data);
+      const valueElement = document.getElementById(`${sensorId}-value`);
+      const timestampElement = document.getElementById(`${sensorId}-timestamp`);
+      
+      if (valueElement && timestampElement) {
+        const value = extractValue(sensorId, data.value);
+        if (value !== null) {
+          const sensor = sensorTypes[sensorId];
+          if (sensor) {
+            valueElement.textContent = `${value} ${sensor.unit}`;
+            // Add data point to chart
+            addChartData(sensorId, value);
+          }
+        } else {
+          valueElement.textContent = 'N/A';
+        }
+        const timestamp = data.lastUpdate ? new Date(data.lastUpdate).toLocaleString() : 'Never';
+        timestampElement.textContent = `Last update: ${timestamp}`;
       }
-      return null;
     }
 
-    function addChartData(chart, dataArr, value) {
-      const now = new Date().toLocaleTimeString();
-      dataArr.labels.push(now);
-      dataArr.data.push(value);
-      if (dataArr.labels.length > 20) {
-        dataArr.labels.shift();
-        dataArr.data.shift();
+    function addChartData(sensorId, value) {
+      console.log('Adding chart data for sensor:', sensorId, value);
+      if (!charts[sensorId] || !isPlaying[sensorId]) {
+        return;
       }
-      chart.update();
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString();
+      
+      // Initialize data arrays if they don't exist
+      if (!sensorData[sensorId]) {
+        sensorData[sensorId] = { labels: [], data: [] };
+      }
+      if (!sensorHistory[sensorId]) {
+        sensorHistory[sensorId] = { timestamps: [], values: [] };
+      }
+
+      // Add new data point to real-time display
+      sensorData[sensorId].labels.push(timeStr);
+      sensorData[sensorId].data.push(value);
+
+      // Add to complete history
+      sensorHistory[sensorId].timestamps.push(now.toISOString());
+      sensorHistory[sensorId].values.push(value);
+
+      // Keep only last 20 data points for real-time display
+      if (sensorData[sensorId].labels.length > 20) {
+        sensorData[sensorId].labels.shift();
+        sensorData[sensorId].data.shift();
+      }
+
+      // Update chart data
+      charts[sensorId].data.labels = sensorData[sensorId].labels;
+      charts[sensorId].data.datasets[0].data = sensorData[sensorId].data;
+      
+      // Update the chart
+      charts[sensorId].update('none'); // Use 'none' mode for better performance
     }
 
+    // Handle sensor data updates
     socket.on('sensor-update', (data) => {
-      updateSensorDisplay('wifi', data.wifi);
-      updateSensorDisplay('lora', data.lora);
-      updateSensorDisplay('ble', data.ble);
-      updateSensorDisplay('ethernet', data.ethernet);
-      // Update charts
-      const wifiVal = extractValue('wifi', data.wifi.value);
-      if (wifiVal !== null) addChartData(wifiChart, wifiData, wifiVal);
-      const loraVal = extractValue('lora', data.lora.value);
-      if (loraVal !== null) addChartData(loraChart, loraData, loraVal);
-      const bleVal = extractValue('ble', data.ble.value);
-      if (bleVal !== null) addChartData(bleChart, bleData, bleVal);
-      const ethVal = extractValue('ethernet', data.ethernet.value);
-      if (ethVal !== null) addChartData(ethernetChart, ethernetData, ethVal);
+      console.log('Received sensor update:', data);
+      if (typeof data === 'object') {
+        Object.entries(data).forEach(([sensorId, sensorData]) => {
+          const checkbox = document.getElementById(`sensor-${sensorId}`);
+          if (checkbox?.checked && isPlaying[sensorId]) {
+            updateSensorDisplay(sensorId, sensorData);
+          }
+        });
+      }
     });
 
-    // Scan & Connect logic (UI only)
-    const scanBtn = document.getElementById('scan-btn');
-    const scanStatus = document.getElementById('scan-status');
-    const scanResults = document.getElementById('scan-results');
-    const connectStatus = document.getElementById('connect-status');
-    scanBtn.addEventListener('click', () => {
-      scanStatus.textContent = 'Scanning...';
-      scanResults.innerHTML = '';
-      connectStatus.textContent = '';
-      setTimeout(() => {
-        // Simulate found sensors
-        const found = [
-          { id: 'BLE-1234', type: 'BLE', rssi: -60 },
-          { id: 'WiFi-5678', type: 'WiFi', rssi: -45 },
-          { id: 'LoRa-9012', type: 'LoRa', rssi: -80 }
-        ];
-        scanStatus.textContent = `Found ${found.length} sensors`;
-        found.forEach(sensor => {
-          const li = document.createElement('li');
-          li.className = 'list-group-item d-flex justify-content-between align-items-center';
-          li.innerHTML = `<span><b>${sensor.type}</b> - ${sensor.id} <span class='text-muted'>(RSSI: ${sensor.rssi})</span></span>` +
-            `<button class='btn btn-sm btn-outline-success ms-2 connect-btn'>Connect</button>`;
-          li.querySelector('.connect-btn').addEventListener('click', () => {
-            connectStatus.textContent = `Connecting to ${sensor.id}...`;
-            setTimeout(() => {
-              connectStatus.textContent = `Connected to ${sensor.id}!`;
-            }, 1200);
-          });
-          scanResults.appendChild(li);
-        });
-      }, 1200);
+    function extractValue(sensorId, valueStr) {
+      const match = valueStr.match(/[\d.]+/);
+      return match ? parseFloat(match[0]) : null;
+    }
+
+    // Initialize the sensor list with a message
+    const sensorList = document.getElementById('sensor-list');
+    sensorList.innerHTML = '<div class="text-center p-3">Click a scan button to discover sensors</div>';
+
+    // Refresh button handler
+    document.getElementById('refresh-sensors').addEventListener('click', () => {
+      const activeType = document.querySelector('.scan-btn:disabled')?.dataset.type;
+      if (activeType) {
+        updateSensorList(activeType);
+      } else {
+        sensorList.innerHTML = '<div class="text-center p-3">Click a scan button to discover sensors</div>';
+      }
     });
+
+    // Scan functionality
+    const scanButtons = document.querySelectorAll('.scan-btn');
+    const scanStatus = document.getElementById('scan-status');
+
+    scanButtons.forEach(button => {
+      button.addEventListener('click', async () => {
+        const sensorType = button.dataset.type;
+        
+        // Show scanning status
+        scanStatus.style.display = 'block';
+        button.disabled = true;
+
+        try {
+          // Clear the sensor list first
+          const sensorList = document.getElementById('sensor-list');
+          sensorList.innerHTML = '<div class="text-center p-3">Scanning for sensors...</div>';
+
+          // Emit scan event to server
+          socket.emit('scan-sensors', { type: sensorType });
+        } catch (error) {
+          console.error('Scan error:', error);
+          const sensorList = document.getElementById('sensor-list');
+          sensorList.innerHTML = '<div class="text-center p-3 text-danger">Error scanning for sensors</div>';
+        } finally {
+          // Hide scanning status after 3 seconds
+          setTimeout(() => {
+            scanStatus.style.display = 'none';
+            button.disabled = false;
+          }, 3000);
+        }
+      });
+    });
+
+    // Handle scan results
+    socket.on('scan-results', (results) => {
+      console.log('Received scan results:', results);
+      if (results && results.length > 0) {
+        // Update the sensor list display for this type
+        updateSensorList(results[0].id.split('-')[0]);
+      } else {
+        const sensorList = document.getElementById('sensor-list');
+        sensorList.innerHTML = '<div class="text-center p-3">No sensors found</div>';
+      }
+    });
+
+    // Helper function to generate random colors for new sensors
+    function getRandomColor() {
+      const colors = ['#36a2eb', '#ff6384', '#4bc0c0', '#ffcd56', '#9966ff', '#ff9f40'];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    // Add Chart.js initialization
+    Chart.defaults.font.family = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+    Chart.defaults.font.size = 12;
+    Chart.defaults.color = '#666';
+    Chart.defaults.borderColor = '#ddd';
+    Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    Chart.defaults.plugins.tooltip.padding = 10;
+    Chart.defaults.plugins.tooltip.cornerRadius = 4;
+    Chart.defaults.plugins.tooltip.titleFont = { size: 14, weight: 'bold' };
+    Chart.defaults.plugins.tooltip.bodyFont = { size: 13 };
+    Chart.defaults.plugins.tooltip.displayColors = false;
+    Chart.defaults.plugins.tooltip.mode = 'index';
+    Chart.defaults.plugins.tooltip.intersect = false;
   </script>
 </body>
 </html>
