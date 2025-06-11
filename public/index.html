@@ -46,17 +46,17 @@
     }
 
     .container {
-      padding: 2rem 1rem;
+      padding: 1rem 0.5rem;
       position: relative;
       z-index: 1;
     }
 
     h1 {
-      font-size: 2.8rem;
+      font-size: 2rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 3px;
-      margin-bottom: 2.5rem;
+      margin-bottom: 1.5rem;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
       background: linear-gradient(45deg, #fff, #e0eafc);
       -webkit-background-clip: text;
@@ -78,8 +78,8 @@
     }
 
     .sensor-card {
-      margin-bottom: 1.5rem;
-      border-radius: 24px;
+      margin-bottom: 1rem;
+      border-radius: 16px;
       background: var(--glass-bg);
       backdrop-filter: blur(10px);
       border: 1px solid var(--glass-border);
@@ -111,14 +111,14 @@
     }
 
     .card-body {
-      padding: 2rem;
+      padding: 1rem;
     }
 
     .sensor-title {
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       font-weight: 700;
       color: var(--text-primary);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       display: flex;
       align-items: center;
       gap: 0.8rem;
@@ -130,31 +130,31 @@
     }
 
     .sensor-value {
-      font-size: 3rem;
+      font-size: 2rem;
       font-weight: 800;
       background: var(--primary-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-      margin: 1.5rem 0;
+      margin: 1rem 0;
       text-align: center;
       letter-spacing: 1px;
     }
 
     .sensor-timestamp {
-      font-size: 1rem;
+      font-size: 0.9rem;
       color: var(--text-secondary);
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       font-weight: 500;
     }
 
     .chart-container {
       position: relative;
-      height: 300px;
+      height: 200px;
       width: 100%;
-      margin: 1.5rem 0;
-      padding: 1.5rem;
+      margin: 1rem 0;
+      padding: 1rem;
       background: var(--glass-bg);
       backdrop-filter: blur(10px);
       border: 1px solid var(--glass-border);
@@ -163,9 +163,9 @@
     }
 
     .sensor-list {
-      max-height: 400px;
+      max-height: 300px;
       overflow-y: auto;
-      padding: 1.5rem;
+      padding: 1rem;
       background: var(--glass-bg);
       backdrop-filter: blur(10px);
       border: 1px solid var(--glass-border);
@@ -174,11 +174,11 @@
     }
 
     .sensor-list-item {
-      padding: 1.2rem;
+      padding: 0.8rem;
       border-bottom: 1px solid var(--glass-border);
       transition: all 0.3s ease;
       border-radius: 15px;
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.5rem;
       background: rgba(255, 255, 255, 0.5);
     }
 
@@ -191,12 +191,12 @@
     .graph-controls {
       display: flex;
       justify-content: center;
-      gap: 1rem;
-      margin-top: 1.5rem;
+      gap: 0.5rem;
+      margin-top: 1rem;
     }
 
     .graph-controls button {
-      padding: 0.8rem 1.5rem;
+      padding: 0.5rem 1rem;
       border-radius: 50px;
       border: none;
       background: var(--primary-gradient);
@@ -205,6 +205,7 @@
       box-shadow: var(--shadow-sm);
       font-weight: 600;
       letter-spacing: 0.5px;
+      font-size: 0.9rem;
     }
 
     .graph-controls button:hover {
@@ -219,7 +220,7 @@
     .btn-primary {
       background: var(--primary-gradient);
       border: none;
-      padding: 1rem 2rem;
+      padding: 0.5rem 1rem;
       border-radius: 50px;
       font-weight: 600;
       letter-spacing: 1px;
@@ -240,12 +241,13 @@
     }
 
     .badge {
-      padding: 0.6rem 1.2rem;
+      padding: 0.4rem 0.8rem;
       border-radius: 50px;
       font-weight: 600;
       background: var(--secondary-gradient);
       color: white;
       box-shadow: var(--shadow-sm);
+      font-size: 0.8rem;
     }
 
     .history-modal .modal-content {
@@ -265,17 +267,17 @@
     }
 
     .history-modal .modal-body {
-      padding: 2.5rem;
+      padding: 1.5rem;
     }
 
     .history-chart {
-      height: 400px;
+      height: 300px;
       position: relative;
       background: var(--glass-bg);
       backdrop-filter: blur(10px);
       border: 1px solid var(--glass-border);
       border-radius: 20px;
-      padding: 1.5rem;
+      padding: 1rem;
       box-shadow: var(--shadow-sm);
     }
 
@@ -283,12 +285,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 1.5rem;
-      margin-top: 2rem;
+      gap: 1rem;
+      margin-top: 1rem;
     }
 
     .history-controls button {
-      padding: 1rem 2rem;
+      padding: 0.5rem 1rem;
       border-radius: 50px;
       font-weight: 600;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -340,15 +342,15 @@
     /* Responsive adjustments */
     @media (max-width: 768px) {
       .container {
-        padding: 1rem;
+        padding: 0.5rem;
       }
 
       h1 {
-        font-size: 2.2rem;
+        font-size: 1.8rem;
       }
 
       .sensor-value {
-        font-size: 2.5rem;
+        font-size: 1.8rem;
       }
 
       .graph-controls {
@@ -362,44 +364,245 @@
       .card-body {
         padding: 1.5rem;
       }
+
+      .side-panel {
+        width: 100%;
+      }
+    }
+
+    .dashboard-container {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .side-panel {
+      width: 350px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .side-panel-title {
+      color: #fff;
+      font-size: 1.3rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .bandwidth-chart {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 15px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .bandwidth-chart:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .bandwidth-chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .bandwidth-chart-title {
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .sensor-status {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .sensor-status .badge {
+      font-size: 0.8rem;
+      padding: 0.4rem 0.8rem;
+    }
+
+    .distance-control {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 15px;
+      padding: 1.5rem;
+    }
+
+    .distance-control h3 {
+      color: #fff;
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .distance-slider {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      outline: none;
+      margin: 1rem 0;
+    }
+
+    .distance-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .distance-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
+    }
+
+    .distance-value {
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 1rem;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard-container {
+        flex-direction: column;
+      }
+      .side-panel {
+        width: 100%;
+      }
+    }
+
+    .sensor-distance-control {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 0.8rem;
+      margin-top: 0.8rem;
+    }
+
+    .sensor-distance-control .distance-slider {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      outline: none;
+      margin: 0.8rem 0;
+    }
+
+    .sensor-distance-control .distance-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .sensor-distance-control .distance-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
+    }
+
+    .chart-wrapper {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 10px;
+      padding: 0.8rem;
+      margin: 0.8rem 0;
+    }
+
+    .gateway-metrics {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 15px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .gateway-chart {
+      margin-bottom: 1rem;
+    }
+
+    .gateway-chart:last-child {
+      margin-bottom: 0;
+    }
+
+    .gateway-chart-title {
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
     }
   </style>
 </head>
 <body>
+  <div class="dashboard-container">
+    <div class="main-content">
   <div class="container mt-4">
     <h1 class="text-center mb-4" style="color:#1e3c72; font-weight:700; letter-spacing:1px;">ESP32 GATEWAY Dashboard</h1>
-    
-    <!-- Scan Section -->
-    <div class="row mb-4">
-      <div class="col-12">
-        <div class="card sensor-card">
-          <div class="card-body">
-            <h5 class="sensor-title mb-3">Scan for Sensors</h5>
-            <div class="d-flex justify-content-center gap-3">
-              <button class="btn btn-primary scan-btn" data-type="wifi">
-                <i class="bi bi-wifi"></i> Scan WiFi Sensors
-              </button>
-              <button class="btn btn-primary scan-btn" data-type="lora">
-                <i class="bi bi-broadcast"></i> Scan LoRaWAN Sensors
-              </button>
-              <button class="btn btn-primary scan-btn" data-type="ble">
-                <i class="bi bi-bluetooth"></i> Scan BLE Sensors
-              </button>
-              <button class="btn btn-primary scan-btn" data-type="ethernet">
-                <i class="bi bi-hdd-network"></i> Scan Ethernet Sensors
-              </button>
-            </div>
-            <div id="scan-status" class="text-center mt-3" style="display: none;">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Scanning...</span>
+        
+        <!-- Scan Section -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card sensor-card">
+              <div class="card-body">
+                <h5 class="sensor-title mb-3">Scan for Sensors</h5>
+                <div class="d-flex justify-content-center gap-3">
+                  <button class="btn btn-primary scan-btn" data-type="wifi">
+                    <i class="bi bi-wifi"></i> Scan WiFi Sensors
+                  </button>
+                  <button class="btn btn-primary scan-btn" data-type="lora">
+                    <i class="bi bi-broadcast"></i> Scan LoRaWAN Sensors
+                  </button>
+                  <button class="btn btn-primary scan-btn" data-type="ble">
+                    <i class="bi bi-bluetooth"></i> Scan BLE Sensors
+                  </button>
+                  <button class="btn btn-primary scan-btn" data-type="ethernet">
+                    <i class="bi bi-hdd-network"></i> Scan Ethernet Sensors
+                  </button>
+                </div>
+                <div id="scan-status" class="text-center mt-3" style="display: none;">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Scanning...</span>
+                  </div>
+                  <span class="ms-2">Scanning for sensors...</span>
+                </div>
               </div>
-              <span class="ms-2">Scanning for sensors...</span>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-
+    
     <!-- Sensor List Section -->
     <div class="row mb-4">
       <div class="col-12">
@@ -419,19 +622,19 @@
       </div>
     </div>
 
-    <!-- Sensor Graphs Section -->
-    <div class="row mb-4">
-      <div class="col-12">
-        <div class="card sensor-card">
-          <div class="card-body">
-            <h5 class="sensor-title mb-3">Sensor Graphs</h5>
-            <div id="sensor-graphs">
-              <!-- Sensor graphs will be populated dynamically -->
+        <!-- Sensor Graphs Section -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card sensor-card">
+              <div class="card-body">
+                <h5 class="sensor-title mb-3">Sensor Graphs</h5>
+                <div id="sensor-graphs">
+                  <!-- Sensor graphs will be populated dynamically -->
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
     <!-- Selected Sensors Display -->
     <div class="row" id="selected-sensors">
@@ -462,6 +665,27 @@
           <div class="history-info" id="historyInfo"></div>
         </div>
       </div>
+        </div>
+      </div>
+    </div>
+    <div class="side-panel">
+      <h2 class="side-panel-title">Gateway Performance Monitor</h2>
+      <div class="gateway-metrics">
+        <div class="gateway-chart">
+          <h4 class="gateway-chart-title">CPU & Memory Usage</h4>
+          <div class="chart-wrapper" style="height: 200px;">
+            <canvas id="gateway-performance-chart"></canvas>
+          </div>
+        </div>
+        <div class="gateway-chart">
+          <h4 class="gateway-chart-title">Power Consumption</h4>
+          <div class="chart-wrapper" style="height: 200px;">
+            <canvas id="gateway-power-chart"></canvas>
+          </div>
+        </div>
+      </div>
+      <h2 class="side-panel-title">Sensor Bandwidth Monitor</h2>
+      <div id="bandwidth-charts-container"></div>
     </div>
   </div>
 
@@ -514,6 +738,18 @@
     let currentSensorId = null;
     const sensorHistory = {}; // Store complete history for each sensor
 
+    // Store bandwidth charts for each sensor
+    const bandwidthCharts = {};
+    const sensorColors = {
+      'wifi': '#36a2eb',
+      'lora': '#ff6384',
+      'ble': '#4bc0c0',
+      'ethernet': '#ffcd56'
+    };
+
+    // Add this to your existing variables
+    const updateIntervals = {};
+
     // Initialize sensor data and charts
     Object.keys(sensorTypes).forEach(sensorId => {
       sensorData[sensorId] = { labels: [], data: [] };
@@ -530,8 +766,8 @@
         <div class="card sensor-card">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <div class="sensor-title">${sensor.name}</div>
-              <div class="sensor-value" id="${sensorId}-value">N/A</div>
+            <div class="sensor-title">${sensor.name}</div>
+            <div class="sensor-value" id="${sensorId}-value">N/A</div>
             </div>
             <div class="sensor-timestamp mb-3" id="${sensorId}-timestamp">Last update: Never</div>
             <div class="chart-container">
@@ -545,7 +781,7 @@
                 <i class="bi bi-zoom-out"></i>
               </button>
               <button class="btn btn-sm btn-success play-pause" title="Play/Pause">
-                <i class="bi bi-pause-fill"></i>
+                <i class="bi bi-play-fill"></i>
               </button>
               <button class="btn btn-sm btn-info history" title="History">
                 <i class="bi bi-clock-history"></i>
@@ -555,14 +791,12 @@
         </div>
       `;
 
-      // Add the card to the DOM first
-      const sensorList = document.getElementById('sensor-list');
-      sensorList.appendChild(card);
+      // Add the card to the DOM
+      const selectedSensors = document.getElementById('selected-sensors');
+      selectedSensors.appendChild(card);
 
-      // Initialize the chart after the card is in the DOM
-      setTimeout(() => {
-        initializeChart(sensorId);
-      }, 100);
+      // Initialize the chart
+      initializeChart(sensorId);
 
       return card;
     }
@@ -587,7 +821,7 @@
         sensorData[sensorId] = { labels: [], data: [] };
       }
       if (isPlaying[sensorId] === undefined) {
-        isPlaying[sensorId] = false; // Start in paused state
+        isPlaying[sensorId] = false;
       }
       
       // Destroy existing chart if it exists
@@ -612,7 +846,7 @@
           responsive: true,
           maintainAspectRatio: false,
           animation: {
-            duration: 0 // Disable animation for real-time updates
+            duration: 0
           },
           plugins: {
             legend: { display: false }
@@ -644,6 +878,20 @@
       // Add event listeners for controls
       const card = canvas.closest('.sensor-card');
       
+      // Play/Pause
+      const playPauseBtn = card.querySelector('.play-pause');
+      playPauseBtn.addEventListener('click', () => {
+        isPlaying[sensorId] = !isPlaying[sensorId];
+        playPauseBtn.innerHTML = isPlaying[sensorId] ? 
+          '<i class="bi bi-pause-fill"></i>' : 
+          '<i class="bi bi-play-fill"></i>';
+        
+        socket.emit('sensor-play-pause', {
+          sensorId: sensorId,
+          isPlaying: isPlaying[sensorId]
+        });
+      });
+      
       // Zoom In
       const zoomInBtn = card.querySelector('.zoom-in');
       zoomInBtn.addEventListener('click', () => {
@@ -652,7 +900,7 @@
           const currentMax = chart.options.scales.y.max || 100;
           const newMax = Math.max(currentMax * 0.8, 10); // Prevent zooming in too much
           chart.options.scales.y.min = 0;
-          chart.options.scales.y.max = newMax;
+        chart.options.scales.y.max = newMax;
           chart.update('none');
         }
       });
@@ -665,28 +913,9 @@
           const currentMax = chart.options.scales.y.max || 100;
           const newMax = currentMax * 1.2;
           chart.options.scales.y.min = 0;
-          chart.options.scales.y.max = newMax;
+        chart.options.scales.y.max = newMax;
           chart.update('none');
         }
-      });
-
-      // Play/Pause
-      const playPauseBtn = card.querySelector('.play-pause');
-      playPauseBtn.innerHTML = isPlaying[sensorId] ? 
-        '<i class="bi bi-pause-fill"></i>' : 
-        '<i class="bi bi-play-fill"></i>';
-      
-      playPauseBtn.addEventListener('click', () => {
-        isPlaying[sensorId] = !isPlaying[sensorId];
-        playPauseBtn.innerHTML = isPlaying[sensorId] ? 
-          '<i class="bi bi-pause-fill"></i>' : 
-          '<i class="bi bi-play-fill"></i>';
-        
-        // Emit play/pause state to server
-        socket.emit('sensor-play-pause', {
-          sensorId: sensorId,
-          isPlaying: isPlaying[sensorId]
-        });
       });
 
       // History
@@ -854,6 +1083,239 @@
       document.body.removeChild(link);
     }
 
+    function createBandwidthChart(sensorId, sensorType) {
+        console.log('Creating bandwidth chart for sensor:', sensorId, 'type:', sensorType);
+        
+        // Get sensor color based on type
+        const color = sensorColors[sensorType] || '#36a2eb';
+        
+        // Create chart container with enhanced styling
+        const chartContainer = document.createElement('div');
+        chartContainer.className = 'bandwidth-chart';
+        chartContainer.innerHTML = `
+            <div class="bandwidth-chart-header">
+                <h4 class="bandwidth-chart-title">${sensorTypes[sensorId].name}</h4>
+                <div class="sensor-status">
+                    <span class="badge bg-success signal-strength">Signal: 100%</span>
+                    <span class="badge bg-info battery-level">Battery: 100%</span>
+                </div>
+            </div>
+            <div class="chart-wrapper" style="height: 200px; position: relative;">
+                <canvas id="${sensorId}-bandwidth-chart"></canvas>
+            </div>
+            <div class="sensor-distance-control mt-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <label class="text-white mb-0">Distance Control</label>
+                    <span class="distance-value text-white" id="${sensorId}-distance-value">50 meters</span>
+                </div>
+                <input type="range" class="distance-slider" min="0" max="100" value="50" 
+                       id="${sensorId}-distance-slider" data-sensor-id="${sensorId}">
+            </div>
+        `;
+
+        // Add the chart container to the side panel
+        const bandwidthChartsContainer = document.getElementById('bandwidth-charts-container');
+        if (!bandwidthChartsContainer) {
+            console.error('Bandwidth charts container not found');
+            return;
+        }
+        bandwidthChartsContainer.appendChild(chartContainer);
+
+        // Initialize the chart with enhanced options
+        const ctx = document.getElementById(`${sensorId}-bandwidth-chart`).getContext('2d');
+        
+        // Initialize data arrays for this sensor
+        if (!sensorData[sensorId]) {
+            sensorData[sensorId] = { labels: [], data: [] };
+        }
+
+        // Generate initial data points
+        const initialDistance = 50;
+        const initialBandwidth = calculateBandwidth(initialDistance, sensorType);
+        sensorData[sensorId].labels = [new Date().toLocaleTimeString()];
+        sensorData[sensorId].data = [initialBandwidth];
+
+        bandwidthCharts[sensorId] = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: sensorData[sensorId].labels,
+                datasets: [{
+                    label: 'Bandwidth (Mbps)',
+                    data: sensorData[sensorId].data,
+                    borderColor: color,
+                    backgroundColor: `${color}20`,
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointHoverRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 0
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                return `Bandwidth: ${context.parsed.y.toFixed(2)} Mbps`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#fff',
+                            callback: function(value) {
+                                return value + ' Mbps';
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Bandwidth',
+                            color: '#fff'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#fff',
+                            maxRotation: 0,
+                            autoSkip: true,
+                            maxTicksLimit: 5
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time',
+                            color: '#fff'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Add event listener for the distance slider
+        const distanceSlider = document.getElementById(`${sensorId}-distance-slider`);
+        const distanceValue = document.getElementById(`${sensorId}-distance-value`);
+
+        if (distanceSlider && distanceValue) {
+            distanceSlider.addEventListener('input', function() {
+                const value = this.value;
+                distanceValue.textContent = `${value} meters`;
+                
+                // Emit distance change to server for this specific sensor
+                socket.emit('distanceChange', { 
+                    distance: parseInt(value),
+                    sensorId: sensorId
+                });
+            });
+        }
+
+        // Start real-time updates
+        startRealTimeUpdates(sensorId, sensorType, initialDistance);
+
+        console.log('Created bandwidth chart for sensor:', sensorId);
+    }
+
+    function startRealTimeUpdates(sensorId, sensorType, initialDistance) {
+        // Clear any existing interval
+        if (updateIntervals[sensorId]) {
+            clearInterval(updateIntervals[sensorId]);
+        }
+
+        // Start new interval
+        updateIntervals[sensorId] = setInterval(() => {
+            const distanceSlider = document.getElementById(`${sensorId}-distance-slider`);
+            const currentDistance = distanceSlider ? parseInt(distanceSlider.value) : initialDistance;
+            
+            // Calculate new bandwidth with some random variation
+            const newBandwidth = calculateBandwidth(currentDistance, sensorType);
+            
+            // Update chart data
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+            
+            if (!sensorData[sensorId]) {
+                sensorData[sensorId] = { labels: [], data: [] };
+            }
+            
+            sensorData[sensorId].labels.push(time);
+            sensorData[sensorId].data.push(newBandwidth);
+            
+            // Keep only last 20 data points
+            if (sensorData[sensorId].labels.length > 20) {
+                sensorData[sensorId].labels.shift();
+                sensorData[sensorId].data.shift();
+            }
+            
+            // Update chart
+            if (bandwidthCharts[sensorId]) {
+                bandwidthCharts[sensorId].data.labels = sensorData[sensorId].labels;
+                bandwidthCharts[sensorId].data.datasets[0].data = sensorData[sensorId].data;
+                bandwidthCharts[sensorId].update('none');
+            }
+            
+            // Update signal strength and battery indicators
+            const container = document.getElementById(`${sensorId}-bandwidth-chart`)?.parentElement.parentElement;
+            if (container) {
+                const signalStrength = container.querySelector('.signal-strength');
+                const batteryLevel = container.querySelector('.battery-level');
+                
+                if (signalStrength) {
+                    const signalValue = Math.max(0, Math.min(100, 100 - (currentDistance * 0.5) + (Math.random() * 10 - 5)));
+                    signalStrength.textContent = `Signal: ${Math.round(signalValue)}%`;
+                    signalStrength.className = `badge ${signalValue > 70 ? 'bg-success' : signalValue > 30 ? 'bg-warning' : 'bg-danger'} signal-strength`;
+                }
+                
+                if (batteryLevel) {
+                    const batteryValue = Math.max(95, Math.min(100, 100 - (Math.random() * 0.1)));
+                    batteryLevel.textContent = `Battery: ${Math.round(batteryValue)}%`;
+                    batteryLevel.className = `badge ${batteryValue > 70 ? 'bg-success' : batteryValue > 30 ? 'bg-warning' : 'bg-danger'} battery-level`;
+                }
+            }
+        }, 1000); // Update every second
+    }
+
+    function removeBandwidthChart(sensorId) {
+        // Clear the update interval
+        if (updateIntervals[sensorId]) {
+            clearInterval(updateIntervals[sensorId]);
+            delete updateIntervals[sensorId];
+        }
+
+        // Remove the chart element
+        const chartElement = document.getElementById(`${sensorId}-bandwidth-chart`);
+        if (chartElement) {
+            const chartContainer = chartElement.closest('.bandwidth-chart');
+            if (chartContainer) {
+                chartContainer.remove();
+            }
+        }
+
+        // Destroy the chart instance
+        if (bandwidthCharts[sensorId]) {
+            bandwidthCharts[sensorId].destroy();
+            delete bandwidthCharts[sensorId];
+        }
+
+        console.log('Removed bandwidth chart for sensor:', sensorId);
+    }
+
     function updateSensorList(type) {
       console.log('Updating sensor list for type:', type);
       const sensorList = document.getElementById('sensor-list');
@@ -890,66 +1352,29 @@
 
         const checkbox = item.querySelector(`#sensor-${sensor.id}`);
         checkbox.addEventListener('change', (e) => {
-          const existingCard = document.querySelector(`#${sensor.id}-chart`);
-          
           if (e.target.checked) {
-            if (!existingCard) {
-              // Create sensor card
-              const card = document.createElement('div');
-              card.className = 'col-12 mb-4';
-              card.innerHTML = `
-                <div class="card sensor-card">
-                  <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                      <div class="sensor-title">${sensor.name}</div>
-                      <div class="sensor-value" id="${sensor.id}-value">N/A</div>
-                    </div>
-                    <div class="sensor-timestamp mb-3" id="${sensor.id}-timestamp">Last update: Never</div>
-                    <div class="chart-container">
-                      <canvas id="${sensor.id}-chart"></canvas>
-                    </div>
-                    <div class="graph-controls mt-3">
-                      <button class="btn btn-sm btn-outline-primary zoom-in" title="Zoom In">
-                        <i class="bi bi-zoom-in"></i>
-                      </button>
-                      <button class="btn btn-sm btn-outline-primary zoom-out" title="Zoom Out">
-                        <i class="bi bi-zoom-out"></i>
-                      </button>
-                      <button class="btn btn-sm btn-success play-pause" title="Play/Pause">
-                        <i class="bi bi-pause-fill"></i>
-                      </button>
-                      <button class="btn btn-sm btn-info history" title="History">
-                        <i class="bi bi-clock-history"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              `;
-
-              // Add the card to the graph container
-              const graphContainer = document.getElementById('sensor-graphs');
-              graphContainer.appendChild(card);
-
-              // Initialize the chart
-              setTimeout(() => {
-                initializeChart(sensor.id);
-                // Subscribe to sensor updates
-                socket.emit('subscribe-sensor', sensor.id);
-                // Start receiving data immediately
-                socket.emit('get-sensor-data', sensor.id);
-              }, 100);
-            }
+            console.log('Sensor checked:', sensor.id);
+            // Create sensor card and initialize chart
+            createSensorCard(sensor.id);
+            // Create bandwidth chart
+            createBandwidthChart(sensor.id, sensor.id.split('-')[0]);
+            // Subscribe to sensor updates
+            socket.emit('subscribe-sensor', sensor.id);
           } else {
-            if (existingCard) {
-              const card = existingCard.closest('.col-12');
+            console.log('Sensor unchecked:', sensor.id);
+            // Remove sensor card and chart
+            const card = document.querySelector(`#sensor-${sensor.id}-chart`).closest('.col-12');
+            if (card) {
               card.remove();
-              if (charts[sensor.id]) {
-                charts[sensor.id].destroy();
-                delete charts[sensor.id];
               }
-              // Unsubscribe from sensor updates
-              socket.emit('unsubscribe-sensor', sensor.id);
+            if (charts[sensor.id]) {
+              charts[sensor.id].destroy();
+              delete charts[sensor.id];
             }
+            // Remove bandwidth chart
+            removeBandwidthChart(sensor.id);
+            // Unsubscribe from sensor updates
+            socket.emit('unsubscribe-sensor', sensor.id);
           }
         });
 
@@ -968,8 +1393,25 @@
           const sensor = sensorTypes[sensorId];
           if (sensor) {
             valueElement.textContent = `${value} ${sensor.unit}`;
-            // Add data point to chart
             addChartData(sensorId, value);
+            
+            // Update sensor status indicators
+            const card = valueElement.closest('.sensor-card');
+            if (card) {
+              let statusBadge = card.querySelector('.sensor-status');
+              if (!statusBadge) {
+                statusBadge = document.createElement('div');
+                statusBadge.className = 'sensor-status mt-2';
+                card.querySelector('.card-body').appendChild(statusBadge);
+              }
+              
+              statusBadge.innerHTML = `
+                <span class="badge ${data.signalStrength > 70 ? 'bg-success' : data.signalStrength > 30 ? 'bg-warning' : 'bg-danger'} me-2">
+                    Signal: ${data.signalStrength}%
+                </span>
+                
+              `;
+            }
           }
         } else {
           valueElement.textContent = 'N/A';
@@ -998,7 +1440,7 @@
 
       // Add new data point to real-time display
       sensorData[sensorId].labels.push(timeStr);
-      sensorData[sensorId].data.push(value);
+        sensorData[sensorId].data.push(value);
 
       // Add to complete history
       sensorHistory[sensorId].timestamps.push(now.toISOString());
@@ -1006,34 +1448,34 @@
 
       // Keep only last 20 data points for real-time display
       if (sensorData[sensorId].labels.length > 20) {
-        sensorData[sensorId].labels.shift();
-        sensorData[sensorId].data.shift();
-      }
+          sensorData[sensorId].labels.shift();
+          sensorData[sensorId].data.shift();
+        }
 
-      // Update chart data
+      // Update chart data with smooth animation
       charts[sensorId].data.labels = sensorData[sensorId].labels;
       charts[sensorId].data.datasets[0].data = sensorData[sensorId].data;
       
-      // Update the chart
-      charts[sensorId].update('none'); // Use 'none' mode for better performance
+      // Update the chart with animation
+        charts[sensorId].update();
     }
 
     // Handle sensor data updates
     socket.on('sensor-update', (data) => {
       console.log('Received sensor update:', data);
       if (typeof data === 'object') {
-        Object.entries(data).forEach(([sensorId, sensorData]) => {
+      Object.entries(data).forEach(([sensorId, sensorData]) => {
           const checkbox = document.getElementById(`sensor-${sensorId}`);
           if (checkbox?.checked && isPlaying[sensorId]) {
-            updateSensorDisplay(sensorId, sensorData);
-          }
-        });
+        updateSensorDisplay(sensorId, sensorData);
+        }
+      });
       }
     });
 
     function extractValue(sensorId, valueStr) {
-      const match = valueStr.match(/[\d.]+/);
-      return match ? parseFloat(match[0]) : null;
+        const match = valueStr.match(/[\d.]+/);
+        return match ? parseFloat(match[0]) : null;
     }
 
     // Initialize the sensor list with a message
@@ -1114,6 +1556,377 @@
     Chart.defaults.plugins.tooltip.displayColors = false;
     Chart.defaults.plugins.tooltip.mode = 'index';
     Chart.defaults.plugins.tooltip.intersect = false;
+
+    // Initialize all charts
+    let bandwidthChart = null;
+    let gatewayPerformanceChart = null;
+    let gatewayPowerChart = null;
+
+    // Initialize bandwidth chart
+    const ctx = document.getElementById('bandwidthChart')?.getContext('2d');
+    if (ctx) {
+        bandwidthChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Bandwidth (Mbps)',
+                    data: [],
+                    borderColor: '#4facfe',
+                    backgroundColor: 'rgba(79, 172, 254, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 0
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#fff'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Bandwidth: ${context.parsed.y.toFixed(2)} Mbps`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#fff',
+                            callback: function(value) {
+                                return value + ' Mbps';
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Bandwidth',
+                            color: '#fff'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#fff'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time',
+                            color: '#fff'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Update bandwidth chart with real data from server
+    socket.on('bandwidthUpdate', function(data) {
+        console.log('Received bandwidth update:', data);
+        if (!bandwidthChart) return;
+
+        const now = new Date();
+        const time = now.toLocaleTimeString();
+        
+        bandwidthChart.data.labels.push(time);
+        bandwidthChart.data.datasets[0].data.push(data.bandwidth);
+        
+        // Keep only last 20 data points for better visualization
+        if (bandwidthChart.data.labels.length > 20) {
+            bandwidthChart.data.labels.shift();
+            bandwidthChart.data.datasets[0].data.shift();
+        }
+        
+        bandwidthChart.update('none'); // Use 'none' mode for better performance
+    });
+
+    // Distance slider functionality
+    const distanceSlider = document.getElementById('distanceSlider');
+    const distanceValue = document.getElementById('distanceValue');
+
+    if (distanceSlider && distanceValue) {
+        distanceSlider.addEventListener('input', function() {
+            const value = this.value;
+            distanceValue.textContent = `${value} meters`;
+            
+            // Emit distance change to server
+            socket.emit('distanceChange', { distance: parseInt(value) });
+        });
+    }
+
+    // Handle distance updates from server
+    socket.on('distanceUpdate', function(data) {
+        console.log('Received distance update:', data);
+        if (distanceSlider && distanceValue) {
+            distanceSlider.value = data.distance;
+            distanceValue.textContent = `${data.distance} meters`;
+        }
+    });
+
+    // Add initial bandwidth data point
+    if (distanceSlider) {
+        const initialDistance = parseInt(distanceSlider.value);
+        socket.emit('distanceChange', { distance: initialDistance });
+    }
+
+    // Handle sensor subscription
+    socket.on('subscribe-sensor', (sensorId) => {
+        console.log('Subscribing to sensor:', sensorId);
+        const sensorType = sensorId.split('-')[0];
+        
+        // Get current distance from the client
+        const currentDistance = 50; // Default distance
+        const initialBandwidth = calculateBandwidth(currentDistance, sensorType);
+        sensorBandwidths.set(sensorId, initialBandwidth);
+        
+        // Generate initial data
+        const initialData = generateSensorData(sensorId);
+        if (initialData) {
+            socket.emit('sensor-update', { [sensorId]: initialData });
+        }
+        
+        // Emit initial bandwidth for this sensor with all necessary data
+        socket.emit('sensorBandwidthUpdate', {
+            sensorId: sensorId,
+            bandwidth: initialBandwidth,
+            signalStrength: initialData?.signalStrength || 100,
+            batteryLevel: initialData?.batteryLevel || 100,
+            timestamp: new Date().toISOString(),
+            sensorType: sensorType,
+            distance: currentDistance
+        });
+        
+        sensorPlayStates.set(sensorId, false);
+    });
+
+    function calculateBandwidth(distance, sensorType) {
+        const baseBandwidth = {
+            'wifi': 100,
+            'lora': 50,
+            'ble': 25,
+            'ethernet': 1000
+        }[sensorType] || 100;
+
+        // Calculate bandwidth based on distance (inverse square law)
+        const maxDistance = 100;
+        const attenuation = Math.pow(distance / maxDistance, 2);
+        const bandwidth = baseBandwidth * (1 - attenuation);
+
+        // Add some random variation
+        const variation = (Math.random() - 0.5) * (baseBandwidth * 0.1);
+        return Math.max(0, bandwidth + variation);
+    }
+
+    // Initialize Gateway Performance Charts
+    function initializeGatewayCharts() {
+        const performanceCtx = document.getElementById('gateway-performance-chart')?.getContext('2d');
+        const powerCtx = document.getElementById('gateway-power-chart')?.getContext('2d');
+
+        if (!performanceCtx || !powerCtx) {
+            console.error('Could not get chart contexts');
+            return;
+        }
+
+        // Initialize Performance Chart
+        gatewayPerformanceChart = new Chart(performanceCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'CPU Usage (%)',
+                        data: [],
+                        borderColor: '#4facfe',
+                        backgroundColor: 'rgba(79, 172, 254, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'Memory Usage (%)',
+                        data: [],
+                        borderColor: '#ff6384',
+                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 0
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#fff'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#fff',
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#fff',
+                            maxRotation: 0,
+                            autoSkip: true,
+                            maxTicksLimit: 5
+                        }
+                    }
+                }
+            }
+        });
+
+        // Initialize Power Chart
+        gatewayPowerChart = new Chart(powerCtx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Power Consumption (W)',
+                    data: [],
+                    borderColor: '#4bc0c0',
+                    backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 0
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#fff'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#fff',
+                            callback: function(value) {
+                                return value + 'W';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        ticks: {
+                            color: '#fff',
+                            maxRotation: 0,
+                            autoSkip: true,
+                            maxTicksLimit: 5
+                        }
+                    }
+                }
+            }
+        });
+
+        // Add initial data points
+        updateGatewayMetrics();
+    }
+
+    // Update gateway metrics
+    function updateGatewayMetrics() {
+        if (!gatewayPerformanceChart || !gatewayPowerChart) {
+            console.error('Charts not initialized');
+            return;
+        }
+
+        const now = new Date();
+        const time = now.toLocaleTimeString();
+        
+        // Calculate CPU and Memory usage based on connected sensors
+        const connectedSensors = Object.keys(bandwidthCharts).length;
+        const baseCPU = 20; // Base CPU usage
+        const baseMemory = 30; // Base memory usage
+        const cpuPerSensor = 5; // CPU usage per sensor
+        const memoryPerSensor = 8; // Memory usage per sensor
+        
+        const cpuUsage = Math.min(100, baseCPU + (connectedSensors * cpuPerSensor) + (Math.random() * 5));
+        const memoryUsage = Math.min(100, baseMemory + (connectedSensors * memoryPerSensor) + (Math.random() * 5));
+        
+        // Calculate power consumption
+        const basePower = 2; // Base power consumption in watts
+        const powerPerSensor = 0.5; // Power consumption per sensor
+        const powerUsage = basePower + (connectedSensors * powerPerSensor) + (Math.random() * 0.2);
+        
+        // Update performance chart
+        gatewayPerformanceChart.data.labels.push(time);
+        gatewayPerformanceChart.data.datasets[0].data.push(cpuUsage);
+        gatewayPerformanceChart.data.datasets[1].data.push(memoryUsage);
+        
+        // Update power chart
+        gatewayPowerChart.data.labels.push(time);
+        gatewayPowerChart.data.datasets[0].data.push(powerUsage);
+        
+        // Keep only last 20 data points
+        if (gatewayPerformanceChart.data.labels.length > 20) {
+            gatewayPerformanceChart.data.labels.shift();
+            gatewayPerformanceChart.data.datasets[0].data.shift();
+            gatewayPerformanceChart.data.datasets[1].data.shift();
+        }
+        
+        if (gatewayPowerChart.data.labels.length > 20) {
+            gatewayPowerChart.data.labels.shift();
+            gatewayPowerChart.data.datasets[0].data.shift();
+        }
+        
+        // Update charts
+        gatewayPerformanceChart.update('none');
+        gatewayPowerChart.update('none');
+    }
+
+    // Initialize charts when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeGatewayCharts();
+        // Start updating gateway metrics
+        setInterval(updateGatewayMetrics, 1000);
+    });
   </script>
 </body>
 </html>
