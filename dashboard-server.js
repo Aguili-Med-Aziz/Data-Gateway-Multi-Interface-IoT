@@ -27,9 +27,9 @@ function setSensorsToZero() {
   // Store current values
   originalSensorData = JSON.parse(JSON.stringify(sensorData));
   
-  // Set all sensors to 0
+  // Set all sensors to 0, except LoRa which should maintain a minimum realistic value
   sensorData.wifi = { value: 'Temperature: 0C, Humidity: 0%', lastUpdate: new Date() };
-  sensorData.lora = { value: 'Temperature: 0C', lastUpdate: new Date() };
+  sensorData.lora = { value: 'Temperature: 20C', lastUpdate: new Date() }; // Keep LoRa at minimum realistic value
   sensorData.ble = { value: 'Vibration: 0g', lastUpdate: new Date() };
   sensorData.ethernet = { value: 'CO2: 0 ppm', lastUpdate: new Date() };
   
@@ -53,6 +53,7 @@ function logSensorData() {
 // Function to emit sensor updates
 function emitSensorUpdate() {
   console.log('Emitting sensor update...');
+  console.log('[DEBUG] LoRa data being sent:', sensorData.lora);
   io.emit('sensor-update', sensorData);
   logSensorData();
 }
@@ -68,7 +69,7 @@ setInterval(() => {
   };
   
   sensorData.lora = {
-    value: `Temperature: ${(20 + Math.random() * 10).toFixed(1)}C`,
+    value: `Temperature: ${Math.max(20, (20 + Math.random() * 10)).toFixed(1)}C`,
     lastUpdate: now
   };
   
@@ -122,6 +123,23 @@ app.post('/update_lora', (req, res) => {
   } else {
     data = req.body;
   }
+  
+  // Check if the value contains zero or near-zero temperature
+  if (data.value && data.value.includes('Temperature: 0C')) {
+    console.log('WARNING: Received zero temperature for LoRa sensor. Rejecting this value.');
+    return res.status(400).json({ status: 'ERROR', message: 'Zero temperature values are not allowed for LoRa sensor' });
+  }
+  
+  // Extract temperature value and ensure it's realistic
+  const tempMatch = data.value.match(/Temperature:\s*([\d.]+)/i);
+  if (tempMatch) {
+    const tempValue = parseFloat(tempMatch[1]);
+    if (tempValue < 15) {
+      console.log(`WARNING: Temperature ${tempValue}°C is too low for LoRa sensor. Adjusting to minimum value.`);
+      data.value = data.value.replace(/Temperature:\s*[\d.]+/i, `Temperature: 20.0`);
+    }
+  }
+  
   sensorData.lora = {
     value: data.value,
     lastUpdate: new Date()

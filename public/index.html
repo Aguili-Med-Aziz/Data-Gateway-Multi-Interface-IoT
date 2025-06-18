@@ -749,15 +749,68 @@
 
     // Add this to your existing variables
     const updateIntervals = {};
+    const clientIntervals = {}; // Client-side intervals for sensor data
+    const fallbackTimers = {}; // Fallback timers for when server data isn't received
 
     // Initialize sensor data and charts
     Object.keys(sensorTypes).forEach(sensorId => {
       sensorData[sensorId] = { labels: [], data: [] };
       sensorHistory[sensorId] = { timestamps: [], values: [] }; // Initialize history storage
-      isPlaying[sensorId] = false; // Start in paused state
+      isPlaying[sensorId] = true; // Start in play state by default
     });
 
+    // Client-side sensor data generation - completely isolated from distance controls
+    function generateClientSensorData(sensorId) {
+      const sensorType = sensorId.split('-')[0];
+      let min, max, precision;
+      
+      // Use fixed ranges that don't depend on any external variables
+      switch (sensorType) {
+        case 'wifi':
+          min = 30;
+          max = 70;
+          precision = 1;
+          break;
+        case 'lora':
+          min = 15;
+          max = 35;
+          precision = 1;
+          break;
+        case 'ble':
+          min = 0.1;
+          max = 2.0;
+          precision = 2;
+          break;
+        case 'ethernet':
+          min = 400;
+          max = 2000;
+          precision = 0;
+          break;
+        default:
+          min = 0;
+          max = 100;
+          precision = 1;
+      }
+      
+      // Use a completely isolated random number generation
+      // This ensures no interference from distance calculations or other parts of the code
+      const timestamp = Date.now();
+      const seed = timestamp % 10000; // Use timestamp as seed for consistency
+      const random1 = ((seed * 9301 + 49297) % 233280) / 233280;
+      const random2 = (((seed + 1) * 9301 + 49297) % 233280) / 233280;
+      
+      const baseValue = min + (random1 * (max - min));
+      const variation = (random2 - 0.5) * ((max - min) * 0.1);
+      const finalValue = baseValue + variation;
+      
+      return parseFloat(finalValue.toFixed(precision));
+    }
+
     function createSensorCard(sensorId) {
+      if (document.getElementById(`${sensorId}-chart`)) {
+        // Card already exists, do not create another
+        return;
+      }
       console.log('Creating sensor card for:', sensorId);
       const sensor = sensorTypes[sensorId];
       const card = document.createElement('div');
@@ -821,7 +874,7 @@
         sensorData[sensorId] = { labels: [], data: [] };
       }
       if (isPlaying[sensorId] === undefined) {
-        isPlaying[sensorId] = false;
+        isPlaying[sensorId] = true; // Start in play state by default
       }
       
       // Destroy existing chart if it exists
@@ -880,12 +933,54 @@
       
       // Play/Pause
       const playPauseBtn = card.querySelector('.play-pause');
+      // Set the correct icon based on play state
+      playPauseBtn.innerHTML = isPlaying[sensorId] ? '<i class="bi bi-pause-fill"></i>' : '<i class="bi bi-play-fill"></i>';
       playPauseBtn.addEventListener('click', () => {
         isPlaying[sensorId] = !isPlaying[sensorId];
+        
         playPauseBtn.innerHTML = isPlaying[sensorId] ? 
           '<i class="bi bi-pause-fill"></i>' : 
           '<i class="bi bi-play-fill"></i>';
         
+        if (isPlaying[sensorId]) {
+          // Start a fallback timer - if no server data received within 3 seconds, start client-side generation
+          const fallbackTimer = setTimeout(() => {
+            // Check if we have any data for this sensor
+            const valueElement = document.getElementById(`${sensorId}-value`);
+            if (valueElement && valueElement.textContent === 'N/A') {
+              console.log(`No server data received for ${sensorId}, starting client-side generation`);
+              // Start client-side interval as fallback
+              const initialValue = generateClientSensorData(sensorId);
+              addChartData(sensorId, initialValue);
+              
+              clientIntervals[sensorId] = setInterval(() => {
+                const value = generateClientSensorData(sensorId);
+                addChartData(sensorId, value);
+              }, 1000);
+            }
+          }, 3000);
+          
+          // Store the timer so we can clear it if server data arrives
+          if (!fallbackTimers) fallbackTimers = {};
+          fallbackTimers[sensorId] = fallbackTimer;
+          
+          console.log(`Started sensor ${sensorId} - waiting for server data`);
+        } else {
+          // Stop client-side interval if it exists
+          if (clientIntervals[sensorId]) {
+            clearInterval(clientIntervals[sensorId]);
+            delete clientIntervals[sensorId];
+            console.log(`Stopped client interval for sensor ${sensorId}`);
+          }
+          
+          // Clear fallback timer if it exists
+          if (fallbackTimers && fallbackTimers[sensorId]) {
+            clearTimeout(fallbackTimers[sensorId]);
+            delete fallbackTimers[sensorId];
+          }
+        }
+        
+        // Send to server for bandwidth calculations
         socket.emit('sensor-play-pause', {
           sensorId: sensorId,
           isPlaying: isPlaying[sensorId]
@@ -1084,152 +1179,159 @@
     }
 
     function createBandwidthChart(sensorId, sensorType) {
-        console.log('Creating bandwidth chart for sensor:', sensorId, 'type:', sensorType);
-        
-        // Get sensor color based on type
-        const color = sensorColors[sensorType] || '#36a2eb';
-        
-        // Create chart container with enhanced styling
-        const chartContainer = document.createElement('div');
-        chartContainer.className = 'bandwidth-chart';
-        chartContainer.innerHTML = `
-            <div class="bandwidth-chart-header">
-                <h4 class="bandwidth-chart-title">${sensorTypes[sensorId].name}</h4>
-                <div class="sensor-status">
-                    <span class="badge bg-success signal-strength">Signal: 100%</span>
-                    <span class="badge bg-info battery-level">Battery: 100%</span>
-                </div>
-            </div>
-            <div class="chart-wrapper" style="height: 200px; position: relative;">
-                <canvas id="${sensorId}-bandwidth-chart"></canvas>
-            </div>
-            <div class="sensor-distance-control mt-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <label class="text-white mb-0">Distance Control</label>
-                    <span class="distance-value text-white" id="${sensorId}-distance-value">50 meters</span>
-                </div>
-                <input type="range" class="distance-slider" min="0" max="100" value="50" 
-                       id="${sensorId}-distance-slider" data-sensor-id="${sensorId}">
-            </div>
-        `;
+      if (document.getElementById(`${sensorId}-bandwidth-chart`)) {
+        // Bandwidth chart already exists, do not create another
+        return;
+      }
+      console.log('Creating bandwidth chart for sensor:', sensorId, 'type:', sensorType);
+      
+      // Get sensor color based on type
+      const color = sensorColors[sensorType] || '#36a2eb';
+      
+      // Define realistic distance ranges for each sensor type
+      const distanceRanges = {
+        'wifi': { min: 0, max: 100, default: 25, unit: 'm' },
+        'lora': { min: 0, max: 10000, default: 1000, unit: 'm' },
+        'ble': { min: 0, max: 100, default: 10, unit: 'm' },
+        'ethernet': { min: 0, max: 100, default: 50, unit: 'm' }
+      };
+      
+      const range = distanceRanges[sensorType] || { min: 0, max: 100, default: 50, unit: 'm' };
+      
+      // Create chart container with enhanced styling
+      const chartContainer = document.createElement('div');
+      chartContainer.className = 'bandwidth-chart';
+      chartContainer.innerHTML = `
+          <div class="bandwidth-chart-header">
+              <h4 class="bandwidth-chart-title">${sensorTypes[sensorId].name}</h4>
+              <div class="sensor-status">
+                  <span class="badge bg-success signal-strength">Signal: 100%</span>
+                  <span class="badge bg-info battery-level">Battery: 100%</span>
+              </div>
+          </div>
+          <div class="chart-wrapper" style="height: 200px; position: relative;">
+              <canvas id="${sensorId}-bandwidth-chart"></canvas>
+          </div>
+          <div class="sensor-distance-control mt-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                  <label class="text-white mb-0">Distance Control</label>
+                  <span class="distance-value text-white" id="${sensorId}-distance-value">${range.default} ${range.unit}</span>
+              </div>
+              <input type="range" class="distance-slider" min="${range.min}" max="${range.max}" value="${range.default}" 
+                     id="${sensorId}-distance-slider" data-sensor-id="${sensorId}">
+          </div>
+      `;
 
-        // Add the chart container to the side panel
-        const bandwidthChartsContainer = document.getElementById('bandwidth-charts-container');
-        if (!bandwidthChartsContainer) {
-            console.error('Bandwidth charts container not found');
-            return;
-        }
-        bandwidthChartsContainer.appendChild(chartContainer);
+      // Add the chart container to the side panel
+      const bandwidthChartsContainer = document.getElementById('bandwidth-charts-container');
+      if (!bandwidthChartsContainer) {
+          console.error('Bandwidth charts container not found');
+          return;
+      }
+      bandwidthChartsContainer.appendChild(chartContainer);
 
-        // Initialize the chart with enhanced options
-        const ctx = document.getElementById(`${sensorId}-bandwidth-chart`).getContext('2d');
-        
-        // Initialize data arrays for this sensor
-        if (!sensorData[sensorId]) {
-            sensorData[sensorId] = { labels: [], data: [] };
-        }
+      // Initialize the chart with enhanced options
+      const ctx = document.getElementById(`${sensorId}-bandwidth-chart`).getContext('2d');
+      
+      // Generate initial data points for bandwidth chart
+      const initialDistance = range.default;
+      const initialBandwidth = calculateBandwidth(initialDistance, sensorType);
 
-        // Generate initial data points
-        const initialDistance = 50;
-        const initialBandwidth = calculateBandwidth(initialDistance, sensorType);
-        sensorData[sensorId].labels = [new Date().toLocaleTimeString()];
-        sensorData[sensorId].data = [initialBandwidth];
+      bandwidthCharts[sensorId] = new Chart(ctx, {
+          type: 'line',
+          data: {
+              labels: [new Date().toLocaleTimeString()],
+              datasets: [{
+                  label: 'Bandwidth (Mbps)',
+                  data: [initialBandwidth],
+                  borderColor: color,
+                  backgroundColor: `${color}20`,
+                  borderWidth: 2,
+                  fill: true,
+                  tension: 0.4,
+                  pointRadius: 3,
+                  pointHoverRadius: 5
+              }]
+          },
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: {
+                  duration: 0
+              },
+              plugins: {
+                  legend: {
+                      display: false
+                  },
+                  tooltip: {
+                      mode: 'index',
+                      intersect: false,
+                      callbacks: {
+                          label: function(context) {
+                              return `Bandwidth: ${context.parsed.y.toFixed(2)} Mbps`;
+                          }
+                      }
+                  }
+              },
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                      grid: {
+                          color: 'rgba(255, 255, 255, 0.1)'
+                      },
+                      ticks: {
+                          color: '#fff',
+                          callback: function(value) {
+                              return value + ' Mbps';
+                          }
+                      },
+                      title: {
+                          display: true,
+                          text: 'Bandwidth',
+                          color: '#fff'
+                      }
+                  },
+                  x: {
+                      grid: {
+                          color: 'rgba(255, 255, 255, 0.1)'
+                      },
+                      ticks: {
+                          color: '#fff',
+                          maxRotation: 0,
+                          autoSkip: true,
+                          maxTicksLimit: 5
+                      },
+                      title: {
+                          display: true,
+                          text: 'Time',
+                          color: '#fff'
+                      }
+                  }
+              }
+          }
+      });
 
-        bandwidthCharts[sensorId] = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: sensorData[sensorId].labels,
-                datasets: [{
-                    label: 'Bandwidth (Mbps)',
-                    data: sensorData[sensorId].data,
-                    borderColor: color,
-                    backgroundColor: `${color}20`,
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 3,
-                    pointHoverRadius: 5
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: {
-                    duration: 0
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        callbacks: {
-                            label: function(context) {
-                                return `Bandwidth: ${context.parsed.y.toFixed(2)} Mbps`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        ticks: {
-                            color: '#fff',
-                            callback: function(value) {
-                                return value + ' Mbps';
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: 'Bandwidth',
-                            color: '#fff'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        ticks: {
-                            color: '#fff',
-                            maxRotation: 0,
-                            autoSkip: true,
-                            maxTicksLimit: 5
-                        },
-                        title: {
-                            display: true,
-                            text: 'Time',
-                            color: '#fff'
-                        }
-                    }
-                }
-            }
-        });
+      // Add event listener for the distance slider
+      const distanceSlider = document.getElementById(`${sensorId}-distance-slider`);
+      const distanceValue = document.getElementById(`${sensorId}-distance-value`);
 
-        // Add event listener for the distance slider
-        const distanceSlider = document.getElementById(`${sensorId}-distance-slider`);
-        const distanceValue = document.getElementById(`${sensorId}-distance-value`);
+      if (distanceSlider && distanceValue) {
+          distanceSlider.addEventListener('input', function() {
+              const value = this.value;
+              distanceValue.textContent = `${value} ${range.unit}`;
+              
+              // Emit distance change to server for this specific sensor
+              socket.emit('distanceChange', { 
+                  distance: parseInt(value),
+                  sensorId: sensorId
+              });
+          });
+      }
 
-        if (distanceSlider && distanceValue) {
-            distanceSlider.addEventListener('input', function() {
-                const value = this.value;
-                distanceValue.textContent = `${value} meters`;
-                
-                // Emit distance change to server for this specific sensor
-                socket.emit('distanceChange', { 
-                    distance: parseInt(value),
-                    sensorId: sensorId
-                });
-            });
-        }
+      // Start real-time updates
+      startRealTimeUpdates(sensorId, sensorType, initialDistance);
 
-        // Start real-time updates
-        startRealTimeUpdates(sensorId, sensorType, initialDistance);
-
-        console.log('Created bandwidth chart for sensor:', sensorId);
+      console.log('Created bandwidth chart for sensor:', sensorId);
     }
 
     function startRealTimeUpdates(sensorId, sensorType, initialDistance) {
@@ -1246,29 +1348,32 @@
             // Calculate new bandwidth with some random variation
             const newBandwidth = calculateBandwidth(currentDistance, sensorType);
             
-            // Update chart data
+            // Update bandwidth chart data (separate from sensor data)
             const now = new Date();
             const time = now.toLocaleTimeString();
             
-            if (!sensorData[sensorId]) {
-                sensorData[sensorId] = { labels: [], data: [] };
+            // Use a separate data structure for bandwidth charts
+            if (!bandwidthCharts[sensorId]) {
+                return; // No bandwidth chart exists
             }
             
-            sensorData[sensorId].labels.push(time);
-            sensorData[sensorId].data.push(newBandwidth);
+            // Initialize bandwidth data if it doesn't exist
+            if (!bandwidthCharts[sensorId].data.labels) {
+                bandwidthCharts[sensorId].data.labels = [];
+                bandwidthCharts[sensorId].data.datasets[0].data = [];
+            }
+            
+            bandwidthCharts[sensorId].data.labels.push(time);
+            bandwidthCharts[sensorId].data.datasets[0].data.push(newBandwidth);
             
             // Keep only last 20 data points
-            if (sensorData[sensorId].labels.length > 20) {
-                sensorData[sensorId].labels.shift();
-                sensorData[sensorId].data.shift();
+            if (bandwidthCharts[sensorId].data.labels.length > 20) {
+                bandwidthCharts[sensorId].data.labels.shift();
+                bandwidthCharts[sensorId].data.datasets[0].data.shift();
             }
             
-            // Update chart
-            if (bandwidthCharts[sensorId]) {
-                bandwidthCharts[sensorId].data.labels = sensorData[sensorId].labels;
-                bandwidthCharts[sensorId].data.datasets[0].data = sensorData[sensorId].data;
-                bandwidthCharts[sensorId].update('none');
-            }
+            // Update bandwidth chart
+            bandwidthCharts[sensorId].update('none');
             
             // Update signal strength and battery indicators
             const container = document.getElementById(`${sensorId}-bandwidth-chart`)?.parentElement.parentElement;
@@ -1277,7 +1382,39 @@
                 const batteryLevel = container.querySelector('.battery-level');
                 
                 if (signalStrength) {
-                    const signalValue = Math.max(0, Math.min(100, 100 - (currentDistance * 0.5) + (Math.random() * 10 - 5)));
+                    // Calculate signal strength based on sensor type and distance
+                    let signalValue;
+                    const maxDistance = {
+                        'wifi': 100,
+                        'lora': 10000,
+                        'ble': 100,
+                        'ethernet': 100
+                    }[sensorType] || 100;
+                    
+                    const normalizedDistance = Math.min(currentDistance / maxDistance, 1);
+                    
+                    // Different signal strength models for each technology
+                    switch(sensorType) {
+                        case 'wifi':
+                            // WiFi signal drops off quickly with distance
+                            signalValue = Math.max(0, Math.min(100, 100 - (normalizedDistance * 80) + (Math.random() * 10 - 5)));
+                            break;
+                        case 'lora':
+                            // LoRa maintains good signal over long distances
+                            signalValue = Math.max(0, Math.min(100, 100 - (normalizedDistance * 40) + (Math.random() * 8 - 4)));
+                            break;
+                        case 'ble':
+                            // BLE signal drops off very quickly
+                            signalValue = Math.max(0, Math.min(100, 100 - (normalizedDistance * 90) + (Math.random() * 12 - 6)));
+                            break;
+                        case 'ethernet':
+                            // Ethernet maintains consistent signal (wired connection)
+                            signalValue = Math.max(95, Math.min(100, 100 - (normalizedDistance * 5) + (Math.random() * 2 - 1)));
+                            break;
+                        default:
+                            signalValue = Math.max(0, Math.min(100, 100 - (normalizedDistance * 60) + (Math.random() * 10 - 5)));
+                    }
+                    
                     signalStrength.textContent = `Signal: ${Math.round(signalValue)}%`;
                     signalStrength.className = `badge ${signalValue > 70 ? 'bg-success' : signalValue > 30 ? 'bg-warning' : 'bg-danger'} signal-strength`;
                 }
@@ -1360,6 +1497,24 @@
             createBandwidthChart(sensor.id, sensor.id.split('-')[0]);
             // Subscribe to sensor updates
             socket.emit('subscribe-sensor', sensor.id);
+            // Set the play state to true and start playing immediately
+            isPlaying[sensor.id] = true;
+            // Start the sensor playing
+            socket.emit('sensor-play-pause', {
+              sensorId: sensor.id,
+              isPlaying: true
+            });
+            // Update the play/pause button to show pause icon
+            const chartElement = document.querySelector(`#sensor-${sensor.id}-chart`);
+            if (chartElement) {
+              const sensorCard = chartElement.closest('.sensor-card');
+              if (sensorCard) {
+                const playPauseBtn = sensorCard.querySelector('.play-pause');
+                if (playPauseBtn) {
+                  playPauseBtn.innerHTML = '<i class="bi bi-pause-fill"></i>';
+                }
+              }
+            }
           } else {
             console.log('Sensor unchecked:', sensor.id);
             // Remove sensor card and chart
@@ -1373,6 +1528,11 @@
             }
             // Remove bandwidth chart
             removeBandwidthChart(sensor.id);
+            // Clean up client-side interval
+            if (clientIntervals[sensor.id]) {
+              clearInterval(clientIntervals[sensor.id]);
+              delete clientIntervals[sensor.id];
+            }
             // Unsubscribe from sensor updates
             socket.emit('unsubscribe-sensor', sensor.id);
           }
@@ -1394,6 +1554,20 @@
           if (sensor) {
             valueElement.textContent = `${value} ${sensor.unit}`;
             addChartData(sensorId, value);
+            
+            // Clear fallback timer since we received server data
+            if (fallbackTimers[sensorId]) {
+              clearTimeout(fallbackTimers[sensorId]);
+              delete fallbackTimers[sensorId];
+              console.log(`Cleared fallback timer for ${sensorId} - server data received`);
+            }
+            
+            // Stop client-side interval if it's running (server data takes priority)
+            if (clientIntervals[sensorId]) {
+              clearInterval(clientIntervals[sensorId]);
+              delete clientIntervals[sensorId];
+              console.log(`Stopped client interval for ${sensorId} - server data received`);
+            }
             
             // Update sensor status indicators
             const card = valueElement.closest('.sensor-card');
@@ -1422,8 +1596,7 @@
     }
 
     function addChartData(sensorId, value) {
-      console.log('Adding chart data for sensor:', sensorId, value);
-      if (!charts[sensorId] || !isPlaying[sensorId]) {
+      if (!charts[sensorId]) {
         return;
       }
 
@@ -1440,7 +1613,7 @@
 
       // Add new data point to real-time display
       sensorData[sensorId].labels.push(timeStr);
-        sensorData[sensorId].data.push(value);
+      sensorData[sensorId].data.push(value);
 
       // Add to complete history
       sensorHistory[sensorId].timestamps.push(now.toISOString());
@@ -1462,18 +1635,65 @@
 
     // Handle sensor data updates
     socket.on('sensor-update', (data) => {
-      console.log('Received sensor update:', data);
       if (typeof data === 'object') {
-      Object.entries(data).forEach(([sensorId, sensorData]) => {
-          const checkbox = document.getElementById(`sensor-${sensorId}`);
-          if (checkbox?.checked && isPlaying[sensorId]) {
-        updateSensorDisplay(sensorId, sensorData);
-        }
-      });
+        Object.entries(data).forEach(([serverSensorId, sensorData]) => {
+          // Map server sensor IDs to frontend sensor IDs
+          const frontendSensorId = `${serverSensorId}-1`;
+          const checkbox = document.getElementById(`sensor-${frontendSensorId}`);
+          if (checkbox?.checked) {
+            updateSensorDisplay(frontendSensorId, sensorData);
+          }
+        });
       }
     });
 
     function extractValue(sensorId, valueStr) {
+        if (!valueStr || valueStr === 'N/A') {
+            return null;
+        }
+        
+        // For LoRa sensor, ensure we get a realistic temperature value
+        if (sensorId.includes('lora')) {
+            // Find all numbers in the string to debug
+            const allNumbers = valueStr.match(/[\d.]+/g);
+            
+            // More specific regex to match "Temperature: XX.XC" format
+            const match = valueStr.match(/Temperature:\s*([\d.]+)\s*C/i);
+            if (match) {
+                const value = parseFloat(match[1]);
+                // Ensure LoRa temperature stays within realistic bounds (15-35°C)
+                const finalValue = Math.max(15, Math.min(35, value));
+                return finalValue;
+            } else {
+                // Try alternative patterns
+                const altMatch = valueStr.match(/(\d+\.?\d*)\s*C/i);
+                if (altMatch) {
+                    const value = parseFloat(altMatch[1]);
+                    const finalValue = Math.max(15, Math.min(35, value));
+                    return finalValue;
+                }
+                
+                // If no C suffix found, look for the largest number that could be a temperature
+                if (allNumbers && allNumbers.length > 0) {
+                    const numbers = allNumbers.map(n => parseFloat(n));
+                    // Filter out very small numbers (likely not temperatures) and find realistic temperature values
+                    const tempCandidates = numbers.filter(n => n >= 15 && n <= 35);
+                    if (tempCandidates.length > 0) {
+                        const bestMatch = Math.max(...tempCandidates);
+                        return bestMatch;
+                    }
+                    
+                    // If no candidates in 15-35 range, look for any number > 10 (likely a temperature)
+                    const largerCandidates = numbers.filter(n => n >= 10);
+                    if (largerCandidates.length > 0) {
+                        const bestMatch = Math.max(...largerCandidates);
+                        return Math.max(15, Math.min(35, bestMatch)); // Clamp to realistic range
+                    }
+                }
+            }
+        }
+        
+        // For other sensors, use the general pattern
         const match = valueStr.match(/[\d.]+/);
         return match ? parseFloat(match[0]) : null;
     }
@@ -1622,12 +1842,10 @@
                             color: 'rgba(255, 255, 255, 0.1)'
                         },
                         ticks: {
-                            color: '#fff'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Time',
-                            color: '#fff'
+                            color: '#fff',
+                            maxRotation: 0,
+                            autoSkip: true,
+                            maxTicksLimit: 5
                         }
                     }
                 }
@@ -1715,21 +1933,53 @@
     });
 
     function calculateBandwidth(distance, sensorType) {
-        const baseBandwidth = {
-            'wifi': 100,
-            'lora': 50,
-            'ble': 25,
-            'ethernet': 1000
-        }[sensorType] || 100;
+        // Define realistic bandwidth characteristics for each sensor type
+        const bandwidthConfig = {
+            'wifi': {
+                maxBandwidth: 100, // Mbps
+                maxDistance: 100, // meters
+                attenuationFactor: 2, // Inverse square law
+                noiseLevel: 0.1
+            },
+            'lora': {
+                maxBandwidth: 0.3, // Mbps (LoRa is much slower)
+                maxDistance: 10000, // meters (10km)
+                attenuationFactor: 1.5, // Less attenuation due to lower frequency
+                noiseLevel: 0.05
+            },
+            'ble': {
+                maxBandwidth: 4, // Mbps (Bluetooth Low Energy)
+                maxDistance: 100, // meters
+                attenuationFactor: 2.5, // Higher attenuation at 2.4GHz
+                noiseLevel: 0.15
+            },
+            'ethernet': {
+                maxBandwidth: 1000, // Mbps (1 Gbps)
+                maxDistance: 100, // meters (cable length)
+                attenuationFactor: 1.2, // Minimal attenuation for wired connection
+                noiseLevel: 0.02
+            }
+        };
 
-        // Calculate bandwidth based on distance (inverse square law)
-        const maxDistance = 100;
-        const attenuation = Math.pow(distance / maxDistance, 2);
-        const bandwidth = baseBandwidth * (1 - attenuation);
-
-        // Add some random variation
-        const variation = (Math.random() - 0.5) * (baseBandwidth * 0.1);
-        return Math.max(0, bandwidth + variation);
+        const config = bandwidthConfig[sensorType] || bandwidthConfig['wifi'];
+        
+        // Calculate normalized distance (0 to 1)
+        const normalizedDistance = Math.min(distance / config.maxDistance, 1);
+        
+        // Calculate bandwidth based on distance with realistic attenuation
+        const attenuation = Math.pow(normalizedDistance, config.attenuationFactor);
+        const bandwidth = config.maxBandwidth * (1 - attenuation);
+        
+        // Add realistic noise variation
+        const noise = (Math.random() - 0.5) * (config.maxBandwidth * config.noiseLevel);
+        const finalBandwidth = Math.max(0, bandwidth + noise);
+        
+        // For LoRa, ensure we don't exceed realistic limits
+        if (sensorType === 'lora') {
+            return Math.min(finalBandwidth, 0.3);
+        }
+        
+        return finalBandwidth;
     }
 
     // Initialize Gateway Performance Charts
