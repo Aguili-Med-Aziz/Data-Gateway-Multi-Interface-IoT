@@ -677,12 +677,6 @@
             <canvas id="gateway-performance-chart"></canvas>
           </div>
         </div>
-        <div class="gateway-chart">
-          <h4 class="gateway-chart-title">Power Consumption</h4>
-          <div class="chart-wrapper" style="height: 200px;">
-            <canvas id="gateway-power-chart"></canvas>
-          </div>
-        </div>
       </div>
       <h2 class="side-panel-title">Sensor Bandwidth Monitor</h2>
       <div id="bandwidth-charts-container"></div>
@@ -822,7 +816,7 @@
             <div class="sensor-title">${sensor.name}</div>
             <div class="sensor-value" id="${sensorId}-value">N/A</div>
             </div>
-            <div class="sensor-timestamp mb-3" id="${sensorId}-timestamp">Last update: Never</div>
+            <div class="sensor-timestamp mb-3" id="${sensorId}-timestamp">Reading ... </div>
             <div class="chart-container">
               <canvas id="${sensorId}-chart"></canvas>
             </div>
@@ -1780,7 +1774,6 @@
     // Initialize all charts
     let bandwidthChart = null;
     let gatewayPerformanceChart = null;
-    let gatewayPowerChart = null;
 
     // Initialize bandwidth chart
     const ctx = document.getElementById('bandwidthChart')?.getContext('2d');
@@ -1985,10 +1978,9 @@
     // Initialize Gateway Performance Charts
     function initializeGatewayCharts() {
         const performanceCtx = document.getElementById('gateway-performance-chart')?.getContext('2d');
-        const powerCtx = document.getElementById('gateway-power-chart')?.getContext('2d');
 
-        if (!performanceCtx || !powerCtx) {
-            console.error('Could not get chart contexts');
+        if (!performanceCtx) {
+            console.error('Could not get performance chart context');
             return;
         }
 
@@ -2060,70 +2052,14 @@
             }
         });
 
-        // Initialize Power Chart
-        gatewayPowerChart = new Chart(powerCtx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Power Consumption (W)',
-                    data: [],
-                    borderColor: '#4bc0c0',
-                    backgroundColor: 'rgba(75, 192, 192, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: {
-                    duration: 0
-                },
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: '#fff'
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        ticks: {
-                            color: '#fff',
-                            callback: function(value) {
-                                return value + 'W';
-                            }
-                        }
-                    },
-                    x: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        },
-                        ticks: {
-                            color: '#fff',
-                            maxRotation: 0,
-                            autoSkip: true,
-                            maxTicksLimit: 5
-                        }
-                    }
-                }
-            }
-        });
-
         // Add initial data points
         updateGatewayMetrics();
     }
 
     // Update gateway metrics
     function updateGatewayMetrics() {
-        if (!gatewayPerformanceChart || !gatewayPowerChart) {
-            console.error('Charts not initialized');
+        if (!gatewayPerformanceChart) {
+            console.error('Performance chart not initialized');
             return;
         }
 
@@ -2140,19 +2076,10 @@
         const cpuUsage = Math.min(100, baseCPU + (connectedSensors * cpuPerSensor) + (Math.random() * 5));
         const memoryUsage = Math.min(100, baseMemory + (connectedSensors * memoryPerSensor) + (Math.random() * 5));
         
-        // Calculate power consumption
-        const basePower = 2; // Base power consumption in watts
-        const powerPerSensor = 0.5; // Power consumption per sensor
-        const powerUsage = basePower + (connectedSensors * powerPerSensor) + (Math.random() * 0.2);
-        
         // Update performance chart
         gatewayPerformanceChart.data.labels.push(time);
         gatewayPerformanceChart.data.datasets[0].data.push(cpuUsage);
         gatewayPerformanceChart.data.datasets[1].data.push(memoryUsage);
-        
-        // Update power chart
-        gatewayPowerChart.data.labels.push(time);
-        gatewayPowerChart.data.datasets[0].data.push(powerUsage);
         
         // Keep only last 20 data points
         if (gatewayPerformanceChart.data.labels.length > 20) {
@@ -2161,14 +2088,8 @@
             gatewayPerformanceChart.data.datasets[1].data.shift();
         }
         
-        if (gatewayPowerChart.data.labels.length > 20) {
-            gatewayPowerChart.data.labels.shift();
-            gatewayPowerChart.data.datasets[0].data.shift();
-        }
-        
-        // Update charts
+        // Update chart
         gatewayPerformanceChart.update('none');
-        gatewayPowerChart.update('none');
     }
 
     // Initialize charts when the page loads
